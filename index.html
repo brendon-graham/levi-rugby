@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.6.1">
+<meta name="app-version" content="0.7.0">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -258,6 +258,8 @@ body{
 .plate .em{font-size:20px;display:block;margin-bottom:4px}
 
 /* ── SESSION (Train) ── */
+.slot-tag{font-size:12px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:1.2px;margin:2px 4px 10px}
+.slot-div{height:1px;background:var(--border);margin:24px 0 20px}
 .sess-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:14px 16px;margin-bottom:10px}
 .sb-head{font-size:12px;font-weight:800;color:var(--fern);text-transform:uppercase;letter-spacing:.8px;
   display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
@@ -430,6 +432,11 @@ body{
     <div class="sh" id="f-plan-title">Today's fuel plan</div>
     <div id="f-plan"></div>
     <div class="mini-note" style="margin-top:10px">Eat every 3–4 hours — 3 meals + 2–3 snacks. Water is your drink; no fizzy or energy drinks.</div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Before a game or a big hunt 🏉</div>
+    <div id="f-gameplan"></div>
   </div>
 
   <div class="card">
@@ -692,99 +699,140 @@ const PATHWAY = [
    Fixed daily session (indexed by day of week, 0=Sun..6=Sat). Develops every area across
    the week, extra weight on the current focus block (tackling & passing), with rest built in.
    Grounded in NZ Small Blacks skill activities + youth athletic-development (LTAD/NSCA). */
-const SESSIONS = [
-  { // 0 Sunday
-    type:'rest', title:'Rest & Recovery', time:'', tag:'Recovery day',
-    intro:"Rest is part of the plan — your body grows and gets stronger when you recover, not when you train.",
-    rest:"<b>Today's job is to recover.</b><br>• Active recovery — ride your bike, go for a swim, muck around outside.<br>• Have a good stretch.<br>• Eat well and get to bed early (9–12 hours).<br><br>No session to tick — the rest counts toward your streak on its own. Back into it tomorrow."
+/* OFF-SEASON two-a-day program: mornings = fitness & power (with Dad), afternoons = skills.
+   5 training days (Mon–Fri), weekends = hunts / recovery. Uses tackle tube, boxing bag,
+   light weights + bands. Light + technique-first + fun — build the engine, keep it safe. */
+const PROGRAM = {
+  1:{ // Monday
+    am:{ title:'Speed & Power', tag:'Morning · with Dad', time:'22 min',
+      intro:'Get explosive. Short and sharp, full effort, rest between.',
+      blocks:[
+        {name:'Warm-up', time:'4 min', items:[{d:'Wake the legs up', c:'Jog, leg swings, lunges, high knees, 2 build-up runs.'}]},
+        {name:'Plyometrics', time:'8 min', items:[
+          {d:'Pogo jumps', t:'3 × 10', c:'Fast, stiff bounces on the balls of your feet.'},
+          {d:'Broad jumps', t:'5', c:'Jump forward for distance. Land soft and STICK it.'},
+          {d:'Single-leg hops', t:'5 each', c:'Control the landing every time.'},
+          {d:'Bounding', t:'3 × 20 m', c:'Big, springy strides down the paddock.'}]},
+        {name:'Speed', time:'8 min', items:[
+          {d:'Accelerations', t:'6 × 15–20 m', c:'Different starts (standing, lying, 3-point). Fast arms, walk back to recover.'},
+          {d:'Band-resisted starts', t:'optional', c:'Dad holds a band round your waist — drive out hard for 5 m.'}]},
+        {name:'Finish', time:'2 min', items:[{d:'2 easy strides', c:'Relaxed and fast. Done.'}]},
+      ]},
+    pm:{ title:'Handling', tag:'After school', time:'18 min',
+      intro:'Hands. Both sides, every day — your edge as a 1st five.',
+      blocks:[
+        {name:'Warm-up', time:'2 min', items:[{d:'Quick hands', c:'Figure-8s round the legs, ball spins.'}]},
+        {name:'Passing — both hands', time:'9 min', items:[
+          {d:'Wall passing, LEFT', t:'30', c:'Ball out front, swing across, point your fingers at the target.'},
+          {d:'Wall passing, RIGHT', t:'30', c:'Fingers on the seams, not the palms.'},
+          {d:'Catch–pass on the move', t:'10 each way', c:'Run onto it, catch and pass in one motion.'}]},
+        {name:'Catching', time:'5 min', items:[{d:'High balls', t:'15', c:'Call "mine!", watch it in, catch at the top.'}]},
+        {name:'Challenge', time:'2 min', items:[{d:'10 in a row', t:'each hand', c:'10 accurate wall passes in a row off each hand.'}]},
+      ]}
   },
-  { // 1 Monday
-    type:'session', title:'Skills & Power', time:'20 min', tag:'Passing + athletic',
-    intro:"Hands and explosive power. Do it well, not fast.",
-    blocks:[
-      {name:'Warm-up', time:'3 min', items:[
-        {d:'Get moving', c:'Jog on the spot 1 min, then 10 lunges, 10 arm swings, 10 squats.'},
+  2:{ // Tuesday
+    am:{ title:'Conditioning — Boxing Bag', tag:'Morning · with Dad', time:'22 min',
+      intro:'Build the engine and quick feet. Keep moving, keep breathing.',
+      blocks:[
+        {name:'Warm-up', time:'4 min', items:[{d:'Skip + shadow', c:'Skip rope 2 min, arm circles, light shadow boxing.'}]},
+        {name:'Bag circuit', time:'12 min', items:[
+          {d:'6 rounds · 40 sec on / 20 off', c:'Mix straight punches, hooks, fast hands. Keep your feet moving round the bag.'},
+          {d:'It\'s for fitness, not power', c:'Breathe, stay light on your feet, work the whole round.'}]},
+        {name:'Core', time:'4 min', items:[{d:'2 rounds', c:'30-sec plank · 20-sec side plank each side · 10 dead-bugs.'}]},
+        {name:'Cool down', time:'2 min', items:[{d:'Easy skip', c:'Slow it down, get your breath back.'}]},
       ]},
-      {name:'Passing — both hands', time:'8 min', items:[
-        {d:'Wall passing, LEFT hand', t:'30 passes', c:'Stand 3–4 m from a wall. Ball in both hands out front, swing across your body, point your fingers at the target on follow-through.'},
-        {d:'Wall passing, RIGHT hand', t:'30 passes', c:'Same off the other side. Fingers spread on the seams, not the palms.'},
-      ]},
-      {name:'Power — plyometrics', time:'7 min', items:[
-        {d:'Pogo jumps', t:'3 × 10', c:'Small, fast bounces on the balls of your feet. Stay stiff like a spring.'},
-        {d:'Stick the landing', t:'5 each leg', c:'Jump and land soft — knees bent, chest up, hold it 2 seconds. Quiet landings.'},
-        {d:'Skipping', t:'2 min', c:'A skipping rope is one of the best athletic tools there is.'},
-      ]},
-      {name:'Challenge', time:'2 min', items:[
-        {d:'Both hands in a row', t:'8 each way', c:'8 accurate wall passes in a row off each hand before you stop.'},
-      ]},
-    ]
+    pm:{ title:'Footwork & Evasion', tag:'After school', time:'16 min',
+      intro:'Beat a defender with your feet.',
+      blocks:[
+        {name:'Warm-up', time:'2 min', items:[{d:'Ankles & feet', c:'Skips, ankle hops, quick feet.'}]},
+        {name:'Footwork', time:'9 min', items:[
+          {d:'Zig-zag cones', t:'4 runs', c:'Change direction hard off the OUTSIDE foot.'},
+          {d:'3-step sidestep', t:'6 each way', c:'Sink low, plant, push off the other way, accelerate.'},
+          {d:'Change of pace', t:'4 runs', c:'Slow… then explode. Find the gears.'}]},
+        {name:'Game', time:'3 min', items:[{d:'Beat Dad', t:'best of 5', c:'1v1 in a 5 m channel — step and go.'}]},
+      ]}
   },
-  { // 2 Tuesday
-    type:'club', title:'Club Training', time:'', tag:'Club night',
-    intro:"Turn up, work hard, listen to your coach, and have fun.",
-    rest:"<b>Club night — bring your best.</b><br>• Work hard and back yourself.<br>• Take your focus with you: <b>safe tackles</b> and <b>passing off both hands</b>.<br>• Talk on the field — a 1st five is the boss out there.<br><br>Tick it done when you get home."
+  3:{ // Wednesday
+    am:{ title:'Strength — light & smart', tag:'Morning · with Dad', time:'22 min',
+      intro:'Own your bodyweight first. Light weights, PERFECT technique, Dad watching. Never heavy.',
+      blocks:[
+        {name:'Warm-up', time:'4 min', items:[{d:'Band activation', c:'Band walks, band pull-aparts, glute bridges, bodyweight squats.'}]},
+        {name:'Strength circuit — 3 rounds', time:'14 min', items:[
+          {d:'Goblet squat (light)', t:'8', c:'Hold a light weight at your chest. Chest up, knees out, sit tall.'},
+          {d:'Press-ups', t:'8', c:'Toes or knees. Straight line, chest to the floor.'},
+          {d:'Band rows', t:'12', c:'Pull the band to your chest, squeeze the shoulder blades.'},
+          {d:'Split squats', t:'6 each leg', c:'Bodyweight or very light. Tall and balanced.'},
+          {d:'Farmer carry', t:'20 m', c:'A light weight each hand. Stand tall, walk strong.'},
+          {d:'Plank', t:'30 sec', c:'Straight as a board.'}]},
+        {name:'Cool down', time:'2 min', items:[{d:'Stretch', c:'Legs, back, shoulders.'}]},
+      ],
+      note:'Weights here are for learning good movement and LIGHT resistance — not for lifting heavy or maxing out. Stop the moment your technique slips.' },
+    pm:{ title:'Tackling — the tackle tube', tag:'After school', time:'18 min',
+      intro:'The safe tackle, built up step by step on the tube.',
+      blocks:[
+        {name:'Warm-up', time:'3 min', items:[{d:'Prep', c:'Jog, squats, shoulder rolls. Warm before any contact.'}]},
+        {name:'On the tube', time:'12 min', items:[
+          {d:'1. Shape (on knees)', t:'5', c:'Head up, back straight, arms ready. Just the position.'},
+          {d:'2. Walk-through', t:'5 each side', c:'Shoulder in, cheek to cheek, wrap both arms — the "ring of steel".'},
+          {d:'3. Controlled tackle', t:'5 each side', c:'Jog on, complete it, leg drive, back to your feet. Aim low, chin off chest.'},
+          {d:'4. Track & tackle', t:'5 each side', c:'Dad moves the tube — track it, then tackle. Eyes open.'}]},
+        {name:'Finish', time:'3 min', items:[{d:'Perfect reps', t:'5 each side', c:'Technique spot-on, both sides.'}]},
+      ]}
   },
-  { // 3 Wednesday
-    type:'session', title:'Footwork & Speed', time:'18 min', tag:'Evasion + speed',
-    intro:"Beat defenders with your feet, and get faster off the mark.",
-    blocks:[
-      {name:'Warm-up', time:'3 min', items:[
-        {d:'Get moving', c:'Jog, high knees, heel flicks, a few skips. Wake the legs up.'},
+  4:{ // Thursday
+    am:{ title:'Agility & Power', tag:'Morning · with Dad', time:'22 min',
+      intro:'Change direction fast and throw hard.',
+      blocks:[
+        {name:'Warm-up', time:'4 min', items:[{d:'Movement prep', c:'Jog, side-steps, carioca, leg swings.'}]},
+        {name:'Agility', time:'8 min', items:[
+          {d:'5-10-5 shuttle', t:'5', c:'Sprint 5 m, back 5, through 10. Stay low in the turns.'},
+          {d:'Mirror drill', t:'4 × 20 sec', c:'Copy Dad\'s movements — react and move.'},
+          {d:'Quick feet', t:'4 sets', c:'Fast feet through a ladder or cones.'}]},
+        {name:'Power', time:'8 min', items:[
+          {d:'Bag / med-ball throws', t:'4 × 5', c:'Chest pass, overhead throw, slam. Explode.'},
+          {d:'Step-up jumps', t:'4 × 5', c:'Onto a low step, land soft and stick it.'}]},
+        {name:'Finish', time:'2 min', items:[{d:'Reaction game', c:'Dad calls, you go. Have fun.'}]},
       ]},
-      {name:'Footwork & evasion', time:'8 min', items:[
-        {d:'Zig-zag run', t:'4 runs', c:'Set 6 cones (or shoes) in a zig-zag. Run through, changing direction hard off the OUTSIDE foot.'},
-        {d:'3-step sidestep', t:'6 each way', c:'Run at Dad/a cone, take 3 steps, plant hard on one foot and push off the other way. Sink low, then accelerate.'},
-      ]},
-      {name:'Speed', time:'5 min', items:[
-        {d:'Accelerations', t:'5 × 15 m', c:'Sprint 15 m, walk back to recover. Fast arms, drive the knees. Form before speed — don\'t tense up.'},
-      ]},
-      {name:'Game', time:'2 min', items:[
-        {d:'Beat Dad', t:'best of 5', c:'In a 5 m channel, use a sidestep to get past. Fix him, then go.'},
-      ]},
-    ]
+    pm:{ title:'Kicking & Catching', tag:'After school', time:'16 min',
+      intro:'A 1st five needs a boot and a safe pair of hands.',
+      blocks:[
+        {name:'Warm-up', time:'2 min', items:[{d:'Easy', c:'Light passing, loosen up.'}]},
+        {name:'Kicking', time:'10 min', items:[
+          {d:'Punt, both feet', t:'8 each', c:'Drop onto the laces, strike clean. Accuracy over distance.'},
+          {d:'Grubber to a target', t:'8', c:'Ball upright, head over it, strike the top half so it rolls.'}]},
+        {name:'Catching', time:'4 min', items:[{d:'High balls', t:'15', c:'Call it, catch at the highest point.'}]},
+      ]}
   },
-  { // 4 Thursday
-    type:'session', title:'Tackling & Strength', time:'20 min', tag:'Tackling focus',
-    intro:"The safe tackle, built up step by step, then a bit of bodyweight strength.",
-    blocks:[
-      {name:'Warm-up', time:'3 min', items:[
-        {d:'Get moving', c:'Jog, lunges, squats, arm swings. Warm and ready before any contact.'},
+  5:{ // Friday
+    am:{ title:'Engine Builder', tag:'Morning · with Dad', time:'22 min',
+      intro:'The big fitness day. Keep moving — build that engine.',
+      blocks:[
+        {name:'Warm-up', time:'4 min', items:[{d:'Get going', c:'Skip, jog, dynamic stretches, a couple of strides.'}]},
+        {name:'Circuit — 3–4 rounds', time:'14 min', items:[
+          {d:'Each round, keep moving', c:'30-sec boxing bag · 10 squats · 20 m shuttle · 8 band rows · 5 broad jumps · 20-sec plank.'},
+          {d:'Rest 60 sec between rounds', c:'Then go again. Push a bit harder each round.'}]},
+        {name:'Finish', time:'2 min', items:[{d:'Well done', c:'Easy walk, big drink. That\'s the week\'s fitness done.'}]},
       ]},
-      {name:'Tackling technique', time:'9 min', items:[
-        {d:'1. Shape (on knees)', t:'5 reps', c:'Kneel at a bag/cushion. Get your shape: head up, back straight, arms ready. No impact — just the position.'},
-        {d:'2. Walk-through', t:'5 each side', c:'Walking pace onto the bag: shoulder in, cheek to cheek, wrap both arms — the "ring of steel".'},
-        {d:'3. Controlled tackle', t:'5 each side', c:'Jog on at half pace, complete it, leg drive, then straight back to your feet. Aim low — hip/thigh. Chin off chest, eyes open.'},
-      ]},
-      {name:'Strength — bodyweight', time:'6 min', items:[
-        {d:'Circuit × 2', t:'each round', c:'10 press-ups · 12 squats · 20-sec plank · 10 bear crawls. Perfect reps, not many reps.'},
-      ]},
-      {name:'Challenge', time:'2 min', items:[
-        {d:'Clean tackles', t:'5 each side', c:'5 safe tackles each side with the technique spot-on.'},
-      ]},
-    ]
+    pm:{ title:'Game Skills', tag:'After school', time:'18 min',
+      intro:'Put it together — skills under a bit of fatigue, like a real game.',
+      blocks:[
+        {name:'Warm-up', time:'2 min', items:[{d:'Ball work', c:'Quick hands, a few passes.'}]},
+        {name:'Combine it', time:'10 min', items:[
+          {d:'Catch–run–pass', t:'8 each way', c:'Take it at pace, draw the defender (Dad), then pass or step.'},
+          {d:'Receive & decide', t:'8', c:'As 1st five: catch, then choose — run, pass, or kick.'}]},
+        {name:'Small game', time:'4 min', items:[{d:'2v1 to a target', c:'Beat Dad — pass at the right moment.'}]},
+        {name:'Finish', time:'2 min', items:[{d:'Finish on a win', c:'Your favourite skill, one good rep.'}]},
+      ]}
   },
-  { // 5 Friday
-    type:'light', title:'Light Skills', time:'12 min', tag:'Pre-game · keep it easy',
-    intro:"Game's tomorrow — keep it light and sharp. If it's been a big week, take a full rest instead.",
-    blocks:[
-      {name:'Catching', time:'4 min', items:[
-        {d:'High-ball catches', t:'15 catches', c:'Throw it up (or Dad kicks). Call "mine!", watch it in, catch at the highest point.'},
-      ]},
-      {name:'Kicking', time:'6 min', items:[
-        {d:'Punt, both feet', t:'8 each foot', c:'Drop the ball onto your laces and strike it. Technique and accuracy, not distance.'},
-        {d:'Grubber to a target', t:'8 kicks', c:'Hold the ball upright, head over it, strike the top half so it rolls along the ground through a gap.'},
-      ]},
-      {name:'Finish', time:'2 min', items:[
-        {d:'Easy passing, then stop', c:'A few relaxed passes each hand. Then rest up — save it for tomorrow.'},
-      ]},
-    ]
-  },
-  { // 6 Saturday
-    type:'game', title:'Game Day', time:'', tag:'Match day',
-    intro:"It's game day. This is what the week's work is for.",
-    rest:"<b>Play, enjoy, and learn one thing.</b><br>• Warm up well before kick-off.<br>• Fuel up — check the <b>Fuel</b> tab for game-day food.<br>• Back your skills: pass both hands, tackle safe and low, talk to your team.<br>• Whatever the score — have fun out there.<br><br>Log your game after, in the Progress tab."
-  },
-];
+  6:{ // Saturday
+    kind:'hunt', title:'Hunt / Hill Day', tag:'Weekend · get outdoors', time:'',
+    intro:'Get out into the hills — brilliant, fun fitness.',
+    note:"<b>Get outside and move for a couple of hours.</b><br>• A hunt, a hill walk, a big active day — easy pace, keep going.<br>• Carry a LIGHT pack (your back's still growing — keep it light).<br>• Take water and food.<br>• Hills build an engine and strong legs like nothing else.<br><br>No session to tick — the day counts on its own. Have a good one." },
+  0:{ // Sunday
+    kind:'recovery', title:'Recovery', tag:'Weekend · easy', time:'',
+    intro:'Easy day. You get fitter and stronger while you recover.',
+    note:"<b>Take it easy today.</b><br>• Out hunting? Keep it cruisy.<br>• Otherwise: a stretch, a swim or an easy bike, good food and an early night.<br>• Rest is when the training pays off — your body rebuilds stronger.<br><br>Back into it tomorrow." },
+};
 function dayName(dow){ return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dow]; }
 
 /* ══════════ FUEL — what to eat, not just that you ate ══════════ */
@@ -823,6 +871,7 @@ function freshState(){
     habits:{}, quizBest:{}, quizzesDone:0,
     pathwayStage:1,
     measurements:[{date:'2026-07-18', height:143, weight:39.5}],
+    doneSessions:{},
     updatedAt:0,
   };
 }
@@ -923,11 +972,11 @@ function checkAch(){
 }
 
 /* ══════════ ACTIONS ══════════ */
-function isRestDow(dow){ return dow===0; } // Sunday is the planned rest day
+function isWeekend(dow){ return dow===0||dow===6; } // Sat hunt + Sun recovery both count
 function computeStreak(){
   const set=new Set(S.trainedDates||[]);
   const d=new Date();
-  const dayOk=(dt)=> set.has(dt.toISOString().slice(0,10)) || isRestDow(dt.getDay());
+  const dayOk=(dt)=> set.has(dt.toISOString().slice(0,10)) || isWeekend(dt.getDay());
   // today not-yet-done doesn't break the streak — start from yesterday in that case
   if(!dayOk(d)) d.setDate(d.getDate()-1);
   let n=0;
@@ -937,11 +986,15 @@ function computeStreak(){
   }
   return n;
 }
-function logTraining(){
+function sessionDone(date,slot){ return !!(S.doneSessions && S.doneSessions[date] && S.doneSessions[date][slot]); }
+function logSession(slot){
   const t=todayISO();
-  if((S.trainedDates||[]).includes(t)){ toast("Today's session is done 💪"); return; }
-  S.trainedDates.push(t);
-  if(S.trainedDates.length>200) S.trainedDates=S.trainedDates.slice(-200);
+  S.doneSessions=S.doneSessions||{};
+  const d=S.doneSessions[t]=S.doneSessions[t]||{};
+  if(d[slot]){ toast('Already done ✓'); return; }
+  d[slot]=true;
+  if(!S.trainedDates.includes(t)) S.trainedDates.push(t);
+  if(S.trainedDates.length>300) S.trainedDates=S.trainedDates.slice(-300);
   S.lastTrain=t; S.sessions+=1;
   S.streak=computeStreak();
   if(S.streak>S.bestStreak) S.bestStreak=S.streak;
@@ -1138,12 +1191,10 @@ function renderFuel(){
   document.getElementById('f-ring').textContent=done+'/'+HABITS.length;
   document.getElementById('f-streak').textContent=fuelStreak();
 
-  const isGameDay=new Date().getDay()===6;
-  const plan=isGameDay?FUEL.gameday:FUEL.training;
-  document.getElementById('f-plan-title').innerHTML=isGameDay?'Game-day fuel 🏉':'Today\'s fuel plan';
-  document.getElementById('f-plan').innerHTML=plan.map(x=>
-    '<div class="meal"><div class="meal-m">'+x.m+'</div><div class="meal-f">'+x.f+'</div></div>'
-  ).join('');
+  const meal=x=>'<div class="meal"><div class="meal-m">'+x.m+'</div><div class="meal-f">'+x.f+'</div></div>';
+  document.getElementById('f-plan-title').textContent='Today\'s fuel plan';
+  document.getElementById('f-plan').innerHTML=FUEL.training.map(meal).join('');
+  document.getElementById('f-gameplan').innerHTML=FUEL.gameday.map(meal).join('');
   document.getElementById('f-portions').innerHTML=FUEL.portions.map(p=>
     '<div class="portion"><div class="pem">'+p.h+'</div><div class="pbody"><div class="pn">'+p.n
     +' <span>= '+p.s+'</span></div><div class="pd">'+p.d+'</div></div></div>'
@@ -1178,49 +1229,60 @@ function renderHome(){
   document.getElementById('h-skills').textContent=skillCount(S);
   document.getElementById('h-sessions').textContent=S.sessions;
 
-  const dow=new Date().getDay(), sess=SESSIONS[dow];
-  const doneToday=(S.trainedDates||[]).includes(todayISO());
+  const dow=new Date().getDay(), p=PROGRAM[dow];
+  document.getElementById('h-focus').textContent='Off-season — build the engine';
+  document.getElementById('h-focusdesc').textContent='Fitness & power in the mornings with Dad, skills after school. 5 days a week, hunts on the weekend — get fit, get skilled.';
   const btn=document.getElementById('h-trainbtn'), lbl=document.getElementById('h-trainlabel');
-  if(sess.type==='rest'){ btn.classList.remove('done'); lbl.textContent='Today: Rest & recovery  →'; }
-  else if(doneToday){ btn.classList.add('done'); lbl.textContent=sess.title+' done ✓  ·  see Train'; }
-  else{ btn.classList.remove('done'); lbl.textContent="Today: "+sess.title+"  →"; }
+  if(p.kind==='recovery'){ btn.classList.remove('done'); lbl.textContent='Today: Recovery  →'; }
+  else if(p.kind==='hunt'){ btn.classList.remove('done'); lbl.textContent='Today: Hunt / hill day  →'; }
+  else {
+    const am=sessionDone(todayISO(),'am'), pm=sessionDone(todayISO(),'pm');
+    if(am&&pm){ btn.classList.add('done'); lbl.textContent='Both done ✓  ·  see Train'; }
+    else{ btn.classList.remove('done'); lbl.textContent='Today: '+p.am.title+' + '+p.pm.title+'  →'; }
+  }
 
   const d=daysToSaturday();
   document.getElementById('h-satdays').textContent = d===0?'0':d;
-  document.getElementById('h-satlabel').textContent = d===0?'Game day — today!':'Game day (Sat)';
+  document.getElementById('h-satlabel').textContent = d===0?'Hunt day — today!':'Hunt day (Sat)';
 }
 
+function renderBlocks(blocks){
+  let h='';
+  blocks.forEach(b=>{
+    h+='<div class="sess-block"><div class="sb-head">'+b.name+(b.time?'<span>'+b.time+'</span>':'')+'</div>';
+    b.items.forEach(it=>{
+      h+='<div class="sb-item"><div class="sb-d">'+it.d+(it.t?'<span class="sb-t">'+it.t+'</span>':'')+'</div>'
+        +(it.c?'<div class="sb-c">'+it.c+'</div>':'')+'</div>';
+    });
+    h+='</div>';
+  });
+  return h;
+}
+function renderSlot(slot, s){
+  const done=sessionDone(todayISO(), slot);
+  let h='<div class="slot-tag">'+(slot==='am'?'☀ Morning — fitness & power':'⚑ Afternoon — skills')+'</div>';
+  h+='<div class="card focus"><div class="tag">'+s.tag+'</div><div class="ttl">'+s.title+'</div>'
+    +'<div class="desc">'+s.intro+'</div>'+(s.time?'<div class="badge">◷ '+s.time+'</div>':'')+'</div>';
+  h+=renderBlocks(s.blocks);
+  if(s.note) h+='<div class="card"><div class="mini-note" style="line-height:1.6">⚠ '+s.note+'</div></div>';
+  h+='<button class="btn '+(done?'done':'')+'" onclick="logSession(\''+slot+'\')">'
+    +(done?'Done ✓  ·  nice work':'Mark done  ·  +20 XP')+'</button>';
+  return h;
+}
 function renderTrain(){
   const dow=new Date().getDay();
-  const s=SESSIONS[dow];
-  const doneToday=(S.trainedDates||[]).includes(todayISO());
-
-  let sh='<div class="card focus"><div class="tag">'+dayName(dow)+' · '+s.tag+'</div>'
-    +'<div class="ttl">'+s.title+'</div>'
-    +'<div class="desc">'+s.intro+'</div>'
-    +(s.time?'<div class="badge">◷ '+s.time+'</div>':'')+'</div>';
-
-  if(s.blocks){
-    s.blocks.forEach(b=>{
-      sh+='<div class="sess-block"><div class="sb-head">'+b.name+(b.time?'<span>'+b.time+'</span>':'')+'</div>';
-      b.items.forEach(it=>{
-        sh+='<div class="sb-item"><div class="sb-d">'+it.d+(it.t?'<span class="sb-t">'+it.t+'</span>':'')+'</div>'
-          +(it.c?'<div class="sb-c">'+it.c+'</div>':'')+'</div>';
-      });
-      sh+='</div>';
-    });
-  }
-
-  if(s.type==='rest'||s.type==='game'||s.type==='club'){
-    sh+='<div class="card"><div class="mini-note" style="font-size:13.5px;line-height:1.6">'+s.rest+'</div></div>';
-  }
-  if(s.type==='rest'){
-    sh+='<div class="mini-note" style="text-align:center">Enjoy the day off — you\'ve earned it.</div>';
-  } else if(s.type==='game'){
-    sh+='<button class="btn" onclick="showTab(\'progress\');openGame()">Log your game  ·  +30 XP</button>';
+  const p=PROGRAM[dow];
+  let sh='';
+  if(p.kind){
+    sh+='<div class="card focus"><div class="tag">'+dayName(dow)+' · '+p.tag+'</div>'
+      +'<div class="ttl">'+p.title+'</div><div class="desc">'+p.intro+'</div></div>';
+    sh+='<div class="card"><div class="mini-note" style="font-size:13.5px;line-height:1.65">'+p.note+'</div></div>';
+    sh+='<div class="mini-note" style="text-align:center">'
+      +(p.kind==='recovery'?'Enjoy the easy day — it\'s where the training pays off.':'Get amongst it — that\'s your weekend fitness sorted.')+'</div>';
   } else {
-    sh+='<button class="btn '+(doneToday?'done':'')+'" onclick="logTraining()">'
-      +(doneToday?'Session done ✓  ·  great work':'Mark session done  ·  +20 XP')+'</button>';
+    sh+=renderSlot('am', p.am);
+    sh+='<div class="slot-div"></div>';
+    sh+=renderSlot('pm', p.pm);
   }
   document.getElementById('t-session').innerHTML=sh;
   document.getElementById('t-skillcount').textContent=skillCount(S)+' / '+TOTAL_SKILLS;
