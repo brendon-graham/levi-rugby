@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0b0d">
+<meta name="app-version" content="0.4.1">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Levi's Road to Black</title>
+<style>
+:root{
+  --bg:#0b0b0d;
+  --surface:#141419;
+  --surface2:#1c1c23;
+  --raised:#23232c;
+  --border:#2a2a34;
+  --text:#f6f6f8;
+  --text2:#8b8b9a;
+  --fern:#43d17a;        /* silver-fern green — the signature accent */
+  --fern-dim:#1c3a2b;
+  --gold:#f4c430;        /* XP / achievements */
+  --gold-dim:#3a3115;
+  --try:#43d17a;
+  --bad:#ff5468;
+  --white:#ffffff;
+  --r:18px;
+  --rs:12px;
+  --shadow:0 8px 30px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #17171f 0%, rgba(11,11,13,0) 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-serif;
+  min-height:100vh;
+  padding-bottom:78px;
+  overflow-x:hidden;
+}
+
+/* ── TOP BAR ── */
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:calc(env(safe-area-inset-top,0px) + 16px) 18px 12px;
+  max-width:600px;margin:0 auto;
+}
+.fern{width:26px;height:26px;flex:0 0 auto}
+.fern path{fill:var(--fern)}
+.brand{font-size:14px;font-weight:800;letter-spacing:.5px}
+.brand .b2{color:var(--text2);font-weight:600}
+.brand-goal{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--fern);border:1px solid var(--fern-dim);
+  padding:5px 10px;border-radius:20px}
+
+/* ── PAGES ── */
+.page{display:none;padding:6px 16px 20px;max-width:600px;margin:0 auto}
+.page.on{display:block;animation:fadeUp .24s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card.flush{padding:0;overflow:hidden}
+.sh{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.4px;
+  color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sh .count{margin-left:auto;color:var(--fern);font-weight:800}
+
+/* ── HERO (Home) ── */
+.hero{text-align:center;padding:22px 18px 20px}
+.hero .hi{font-size:13px;color:var(--text2);font-weight:600;letter-spacing:.3px}
+.hero .lvl-name{font-size:26px;font-weight:900;letter-spacing:-.5px;margin:2px 0 2px}
+.hero .lvl-sub{font-size:12px;color:var(--fern);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.xpwrap{margin:18px 4px 6px}
+.xpbar{height:14px;background:var(--surface2);border-radius:20px;overflow:hidden;border:1px solid var(--border)}
+.xpfill{height:100%;background:linear-gradient(90deg,var(--fern),#8ff0b6);border-radius:20px;
+  transition:width .6s cubic-bezier(.2,.9,.3,1);box-shadow:0 0 14px rgba(67,209,122,.5)}
+.xpmeta{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-top:7px;font-weight:600}
+
+/* stat row */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);
+  padding:14px 8px;text-align:center}
+.stat .n{font-size:24px;font-weight:900;line-height:1}
+.stat .n.gold{color:var(--gold)}
+.stat .n.fern{color:var(--fern)}
+.stat .l{font-size:9.5px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;
+  font-weight:700;margin-top:6px}
+
+/* focus card */
+.focus{background:linear-gradient(135deg,#15241b,#141419);border:1px solid var(--fern-dim)}
+.focus .tag{font-size:10px;font-weight:800;color:var(--fern);text-transform:uppercase;letter-spacing:1.4px}
+.focus .ttl{font-size:19px;font-weight:900;margin:6px 0 4px}
+.focus .desc{font-size:13px;color:var(--text2);line-height:1.5}
+
+/* pathway strip */
+.rung{display:flex;align-items:center;gap:12px}
+.rung .dot{width:12px;height:12px;border-radius:50%;background:var(--fern);
+  box-shadow:0 0 10px var(--fern);flex:0 0 auto}
+.rung .txt{font-size:13px;font-weight:700}
+.rung .txt span{color:var(--text2);font-weight:500}
+.rung .nxt{margin-left:auto;font-size:11px;color:var(--text2)}
+
+/* saturday */
+.sat{display:flex;align-items:center;gap:14px}
+.sat .big{font-size:34px;font-weight:900;color:var(--gold);line-height:1}
+.sat .txt{font-size:13px;color:var(--text2);font-weight:600}
+.sat .txt b{color:var(--text);display:block;font-size:15px}
+
+/* ── BUTTONS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  min-height:52px;border:none;border-radius:14px;font-size:15px;font-weight:800;
+  cursor:pointer;color:#08120c;background:linear-gradient(90deg,var(--fern),#6ee79b);
+  letter-spacing:.3px;transition:transform .1s,filter .1s}
+.btn:active{transform:scale(.98);filter:brightness(1.05)}
+.btn.done{background:var(--surface2);color:var(--text2);cursor:default}
+.btn.ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn.sm{min-height:44px;font-size:14px}
+
+/* ── SKILLS (Train) ── */
+.grp{margin-bottom:4px}
+.grp-h{font-size:12px;font-weight:800;color:var(--text);margin:16px 4px 8px;
+  display:flex;align-items:center;gap:8px}
+.grp-h .ic{width:18px;height:18px;stroke:var(--fern);fill:none;stroke-width:2}
+.skill{display:flex;align-items:center;gap:13px;padding:14px 14px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--rs);margin-bottom:8px;cursor:pointer;
+  transition:border-color .15s,background .15s}
+.skill:active{background:var(--surface2)}
+.skill.on{border-color:var(--fern-dim);background:linear-gradient(90deg,#13221a,var(--surface))}
+.skill.focus-s{box-shadow:inset 3px 0 0 var(--gold)}
+.check{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;transition:all .15s}
+.skill.on .check{background:var(--fern);border-color:var(--fern)}
+.check svg{width:15px;height:15px;stroke:#08120c;fill:none;stroke-width:3.5;opacity:0;transition:opacity .15s}
+.skill.on .check svg{opacity:1}
+.skill .nm{font-size:14.5px;font-weight:700;flex:1}
+.skill .fb{font-size:9px;font-weight:800;color:var(--gold);text-transform:uppercase;
+  letter-spacing:.8px;border:1px solid var(--gold-dim);padding:3px 7px;border-radius:12px;flex:0 0 auto}
+
+/* ── ACHIEVEMENTS ── */
+.ach-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ach{aspect-ratio:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  padding:6px;text-align:center;opacity:.35;filter:grayscale(1);transition:all .3s}
+.ach.got{opacity:1;filter:none;border-color:var(--gold-dim);background:linear-gradient(160deg,#221e10,var(--surface))}
+.ach .em{font-size:26px;line-height:1}
+.ach .an{font-size:8.5px;font-weight:700;color:var(--text2);line-height:1.15}
+.ach.got .an{color:var(--text)}
+
+/* ── LOG ITEMS ── */
+.li{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.li:last-child{border-bottom:none}
+.li .d{font-size:11px;color:var(--text2);font-weight:700;flex:0 0 58px;padding-top:2px}
+.li .body{flex:1}
+.li .t{font-size:14px;font-weight:700}
+.li .s{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.4}
+.li .em{font-size:18px;flex:0 0 auto}
+.empty{text-align:center;color:var(--text2);font-size:13px;padding:22px 10px;line-height:1.5}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:flex-end;justify-content:center}
+.overlay.on{display:flex;animation:fadeUp .2s ease}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:22px 22px 0 0;
+  width:100%;max-width:600px;padding:22px 18px calc(env(safe-area-inset-bottom,0px) + 22px);
+  animation:slideUp .28s cubic-bezier(.2,.9,.3,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal h3{font-size:18px;font-weight:900;margin-bottom:4px}
+.modal .msub{font-size:13px;color:var(--text2);margin-bottom:16px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:1px;color:var(--text2);margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);
+  border:1px solid var(--border);border-radius:12px;padding:14px;color:var(--text);
+  font-size:16px;font-family:inherit}
+.field textarea{resize:none;min-height:70px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── XP TOAST ── */
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 20px);transform:translateX(-50%) translateY(-140%);
+  background:var(--gold);color:#1a1500;font-weight:900;font-size:14px;padding:12px 20px;
+  border-radius:30px;z-index:300;box-shadow:0 8px 30px rgba(244,196,48,.4);
+  transition:transform .4s cubic-bezier(.2,.9,.3,1);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,17,.96);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);
+  display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:11px 4px 9px;cursor:pointer;color:var(--text2);font-size:9.5px;font-weight:800;
+  letter-spacing:.6px;text-transform:uppercase;border:none;background:none;transition:color .2s}
+.nb svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nb.on{color:var(--fern)}
+
+.divider{height:1px;background:var(--border);margin:2px 0 14px}
+
+/* ── TRACK CARDS (Rules) ── */
+.track{display:flex;align-items:center;gap:14px;padding:18px;cursor:pointer;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  margin-bottom:12px;transition:border-color .15s,transform .1s}
+.track:active{transform:scale(.99)}
+.track.a{background:linear-gradient(135deg,#1a1420,var(--surface));border-color:#3a2540}
+.track.b{background:linear-gradient(135deg,#141a24,var(--surface));border-color:#25405a}
+.track .tk-em{font-size:30px;flex:0 0 auto}
+.track .tk-body{flex:1;min-width:0}
+.track .tk-t{font-size:16px;font-weight:900}
+.track .tk-s{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.4}
+.track .tk-best{margin-top:7px;font-size:11px;font-weight:800;color:var(--gold)}
+.track .tk-go{color:var(--text2);font-size:22px;flex:0 0 auto}
+
+/* ── QUIZ ── */
+.q-count{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.q-bar{height:6px;background:var(--surface2);border-radius:10px;overflow:hidden;margin:10px 0 18px}
+.q-bar > div{height:100%;background:var(--fern);border-radius:10px;transition:width .3s}
+.q-text{font-size:19px;font-weight:800;line-height:1.35;margin-bottom:18px}
+.qopt{display:block;width:100%;text-align:left;padding:15px 16px;margin-bottom:10px;
+  background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;
+  color:var(--text);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;
+  transition:all .12s}
+.qopt:active{transform:scale(.99)}
+.qopt.correct{background:var(--fern-dim);border-color:var(--fern);color:#eafff2}
+.qopt.wrong{background:#3a1620;border-color:var(--bad);color:#ffe3e8}
+.qopt.dim{opacity:.5}
+.q-why{font-size:13px;color:var(--text2);line-height:1.5;padding:12px 14px;margin:4px 0 14px;
+  background:var(--surface2);border-radius:12px;border-left:3px solid var(--fern)}
+.q-result{text-align:center;padding:12px 6px}
+.q-result .big{font-size:46px;font-weight:900;line-height:1}
+.q-result .big.gold{color:var(--gold)}
+.q-result .msg{font-size:15px;color:var(--text2);margin:8px 0 4px;font-weight:600}
+
+/* ── FUEL ── */
+.fuel-hero{text-align:center;padding:20px}
+.fuel-hero .ring{font-size:40px;font-weight:900;color:var(--fern);line-height:1}
+.fuel-hero .sub{font-size:12px;color:var(--text2);margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.8px}
+.habit{display:flex;align-items:center;gap:13px;padding:14px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--rs);margin-bottom:8px;cursor:pointer;
+  transition:border-color .15s,background .15s}
+.habit:active{background:var(--surface2)}
+.habit.on{border-color:var(--fern-dim);background:linear-gradient(90deg,#13221a,var(--surface))}
+.habit .hem{font-size:22px;flex:0 0 auto;width:26px;text-align:center}
+.habit .hn{font-size:14.5px;font-weight:700;flex:1}
+.plate{display:flex;gap:8px;margin-top:4px}
+.plate .seg{flex:1;text-align:center;padding:12px 6px;border-radius:12px;font-size:11px;font-weight:800}
+.plate .p1{background:#2a1618;color:#ffb3bd}
+.plate .p2{background:#2a2410;color:#ffe08a}
+.plate .p3{background:#122a1c;color:#8ff0b6}
+.plate .em{font-size:20px;display:block;margin-bottom:4px}
+
+/* ── PATHWAY ── */
+.pathway-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.backbtn{width:40px;height:40px;flex:0 0 auto;border-radius:12px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.backbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pathway-head .pt{font-size:19px;font-weight:900}
+.pathway-head .ps{font-size:11px;color:var(--text2);font-weight:600}
+.pw-rung{display:flex;gap:14px}
+.pw-rail{display:flex;flex-direction:column;align-items:center;flex:0 0 34px}
+.pw-node{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:13px;border:2px solid var(--border);background:var(--surface2);color:var(--text2);flex:0 0 auto}
+.pw-node.done{background:var(--fern);border-color:var(--fern);color:#08120c}
+.pw-node.current{background:var(--fern);border-color:var(--fern);color:#08120c;
+  box-shadow:0 0 0 4px var(--fern-dim),0 0 18px rgba(67,209,122,.6)}
+.pw-node.goal{background:#000;border-color:var(--gold);color:#fff;font-size:17px;
+  box-shadow:0 0 0 3px var(--gold-dim)}
+.pw-connect{width:2px;flex:1;background:var(--border);min-height:16px;margin:2px 0}
+.pw-connect.done{background:var(--fern)}
+.pw-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);
+  padding:13px 14px;margin-bottom:10px;transition:opacity .2s}
+.pw-card.future{opacity:.55}
+.pw-card.current{border-color:var(--fern-dim);background:linear-gradient(90deg,#13221a,var(--surface))}
+.pw-card.goal{border-color:var(--gold-dim);background:linear-gradient(90deg,#221e10,var(--surface))}
+.pw-card .n{font-size:15px;font-weight:800}
+.pw-card .a{font-size:11px;color:var(--fern);font-weight:700;margin-left:7px}
+.pw-card.goal .a{color:var(--gold)}
+.pw-card .d{font-size:12.5px;color:var(--text2);margin-top:4px;line-height:1.45}
+.pw-card .badge{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  color:var(--fern);margin-top:7px;display:inline-block}
+.tappable{cursor:pointer}
+.tappable .cta{font-size:11px;color:var(--fern);font-weight:800;margin-top:8px}
+
+/* ── GROWTH CHART ── */
+.chart svg{width:100%;height:auto;display:block;margin-top:4px}
+.chart-legend{display:flex;gap:16px;font-size:11px;font-weight:700;color:var(--text2);margin-top:8px}
+.chart-legend .dotc{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.mini-note{font-size:11.5px;color:var(--text2);line-height:1.5;margin-top:2px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <svg class="fern" viewBox="0 0 24 24"><path d="M12 2c-1 4-1 7 0 20 1-13 1-16 0-20zm0 4c2 1 4 1 6 0-1 2-3 3-6 3zm0 4c2 1 4 1 6 0-1 2-3 3-6 3zm0 4c1.5 .8 3 .8 4.5 0-.8 1.6-2.4 2.4-4.5 2.4zM12 6c-2 1-4 1-6 0 1 2 3 3 6 3zm0 4c-2 1-4 1-6 0 1 2 3 3 6 3zm0 4c-1.5 .8-3 .8-4.5 0 .8 1.6 2.4 2.4 4.5 2.4z"/></svg>
+  <div class="brand">LEVI'S ROAD <span class="b2">to Black</span></div>
+  <div class="brand-goal">Goal: All Black</div>
+</div>
+
+<!-- ══ HOME ══ -->
+<div class="page on" id="home">
+  <div class="card hero">
+    <div class="hi">Kia ora, Levi 🏉</div>
+    <div class="lvl-name" id="h-lvlname">Level 1</div>
+    <div class="lvl-sub" id="h-lvltitle">Club Junior</div>
+    <div class="xpwrap">
+      <div class="xpbar"><div class="xpfill" id="h-xpfill" style="width:0%"></div></div>
+      <div class="xpmeta"><span id="h-xpnow">0 XP</span><span id="h-xpnext">100 XP to Level 2</span></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n gold" id="h-streak">0</div><div class="l">Day Streak</div></div>
+    <div class="stat"><div class="n fern" id="h-skills">0</div><div class="l">Skills</div></div>
+    <div class="stat"><div class="n" id="h-sessions">0</div><div class="l">Sessions</div></div>
+  </div>
+
+  <div class="card focus">
+    <div class="tag">This Block's Focus</div>
+    <div class="ttl" id="h-focus">Tackling &amp; Passing</div>
+    <div class="desc" id="h-focusdesc">Safe tackle technique below the sternum, and an accurate pass off both hands. A little every day.</div>
+  </div>
+
+  <button class="btn" id="h-trainbtn" onclick="openTrainTab()" style="margin-bottom:14px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#08120c" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    <span id="h-trainlabel">Log today's training</span>
+  </button>
+
+  <div class="card tappable" onclick="openPathway()">
+    <div class="sh">Where you are</div>
+    <div class="rung">
+      <div class="dot"></div>
+      <div class="txt" id="h-rung">Small Blacks — Club Junior <span>(Southern, Hinds)</span></div>
+      <div class="nxt">Rung 1 / 11</div>
+    </div>
+    <div class="cta">View the full road to Black ›</div>
+  </div>
+
+  <div class="card sat">
+    <div class="big" id="h-satdays">–</div>
+    <div class="txt">days until<b id="h-satlabel">Game day</b></div>
+  </div>
+</div>
+
+<!-- ══ TRAIN ══ -->
+<div class="page" id="train">
+  <div class="card focus">
+    <div class="tag">Working on now</div>
+    <div class="ttl">Tackling &amp; Passing</div>
+    <div class="desc">Tap a skill when it's becoming automatic — not just in the backyard, but when you're tired and marked. Gold-edged skills are this block's focus.</div>
+  </div>
+
+  <button class="btn" id="t-logbtn" onclick="logTraining()" style="margin-bottom:6px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#08120c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+    <span id="t-loglabel">Log today's training  ·  +20 XP</span>
+  </button>
+  <div class="mini-note" style="text-align:center;margin-bottom:6px" id="t-lognote">Do a bit most days. Consistency beats intensity.</div>
+
+  <div id="t-skills"></div>
+</div>
+
+<!-- ══ PROGRESS ══ -->
+<div class="page" id="progress">
+  <div class="card">
+    <div class="sh">The Journey</div>
+    <div class="stats" style="margin-top:0">
+      <div class="stat"><div class="n gold" id="p-xp">0</div><div class="l">Total XP</div></div>
+      <div class="stat"><div class="n fern" id="p-skills">0</div><div class="l">Skills Won</div></div>
+      <div class="stat"><div class="n" id="p-games">0</div><div class="l">Games</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Growth <span class="count" id="p-growthlatest"></span></div>
+    <div class="stats" style="margin-top:0;margin-bottom:14px">
+      <div class="stat"><div class="n fern" id="p-height">–</div><div class="l">Height cm</div></div>
+      <div class="stat"><div class="n gold" id="p-weight">–</div><div class="l">Weight kg</div></div>
+    </div>
+    <div id="p-growth-chart"></div>
+    <button class="btn ghost sm" onclick="openMeasure()" style="margin-top:12px">+ Add a measurement</button>
+  </div>
+
+  <div class="card">
+    <div class="sh">Achievements <span class="count" id="p-achcount">0 / 12</span></div>
+    <div class="ach-grid" id="p-ach"></div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Game Log</div>
+    <button class="btn ghost sm" onclick="openGame()" style="margin-bottom:14px">+ Add a game</button>
+    <div id="p-games-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Milestones &amp; Memories</div>
+    <div id="p-miles"></div>
+  </div>
+</div>
+
+<!-- ══ FUEL ══ -->
+<div class="page" id="fuel">
+  <div class="card fuel-hero">
+    <div class="ring" id="f-ring">0/6</div>
+    <div class="sub">Today's fuel · <span id="f-streak">0</span> day streak</div>
+  </div>
+
+  <div class="sh" style="margin:4px 4px 10px">Tick it as you do it — +5 XP each</div>
+  <div id="f-habits"></div>
+
+  <div class="card">
+    <div class="sh">The good plate — every main meal</div>
+    <div class="plate">
+      <div class="seg p1"><span class="em">🥩</span>Protein<br>build &amp; repair</div>
+      <div class="seg p2"><span class="em">🍚</span>Carbs<br>energy</div>
+      <div class="seg p3"><span class="em">🥦</span>Colour<br>protect</div>
+    </div>
+    <div class="mini-note" style="margin-top:12px">Beef, venison, chicken, eggs, milk · potato, kūmara, rice, pasta, oats · veg &amp; fruit. Water to drink — never fizzy or energy drinks. Sleep 9–12 hrs: recovery is fuel too.</div>
+  </div>
+</div>
+
+<!-- ══ RULES ══ -->
+<div class="page" id="rules">
+  <div class="card focus">
+    <div class="tag">Know the laws</div>
+    <div class="ttl">Two tracks</div>
+    <div class="desc">Learn the grade you play now <b>and</b> the national game you're building toward. A 1st five who knows the laws reads the game faster.</div>
+  </div>
+
+  <div class="track a" onclick="startQuiz('a')">
+    <div class="tk-em">🏉</div>
+    <div class="tk-body">
+      <div class="tk-t">Grade Rules</div>
+      <div class="tk-s">Small Blacks U11 — what the whistle goes for on Saturday</div>
+      <div class="tk-best" id="r-best-a">Not tried yet</div>
+    </div>
+    <div class="tk-go">›</div>
+  </div>
+
+  <div class="track b" onclick="startQuiz('b')">
+    <div class="tk-em">🖤</div>
+    <div class="tk-body">
+      <div class="tk-t">The National Game</div>
+      <div class="tk-s">Full 15-a-side laws — the real game the All Blacks play</div>
+      <div class="tk-best" id="r-best-b">Not tried yet</div>
+    </div>
+    <div class="tk-go">›</div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Best way to learn</div>
+    <div class="mini-note">Watch the Crusaders and All Blacks with Dad. When the ref blows the whistle, work out <b>why</b>. Live rugby teaches the laws better than any book.</div>
+  </div>
+</div>
+
+<!-- ══ PATHWAY (full view, opened from Home) ══ -->
+<div class="page" id="pathway">
+  <div class="pathway-head">
+    <button class="backbtn" onclick="showTab('home')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div>
+      <div class="pt">The Road to Black</div>
+      <div class="ps">11 rungs — from Southern club to the All Blacks</div>
+    </div>
+  </div>
+  <div id="pw-list"></div>
+  <div class="mini-note" style="text-align:center;margin:8px 4px 0">Keep fit, skilled, healthy and loving the game. Get to a strong 1st XV still hungry — the rest is earned on the field.</div>
+</div>
+
+<!-- ══ NAV ══ -->
+<div class="nav">
+  <button class="nb on" data-tab="home" onclick="showTab('home')">
+    <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</button>
+  <button class="nb" data-tab="train" onclick="showTab('train')">
+    <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11"/><path d="M4 9l2-2 2 2M20 15l-2 2-2-2M9 4l2-2 2 2M15 20l-2 2-2-2"/></svg>Train</button>
+  <button class="nb" data-tab="fuel" onclick="showTab('fuel')">
+    <svg viewBox="0 0 24 24"><path d="M6 2h9l-1 9h2l-7 11 1-8H6z"/></svg>Fuel</button>
+  <button class="nb" data-tab="rules" onclick="showTab('rules')">
+    <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h8v16H6a2 2 0 00-2 2z"/><path d="M14 3h4a2 2 0 012 2v14a2 2 0 00-2-2h-4"/></svg>Rules</button>
+  <button class="nb" data-tab="progress" onclick="showTab('progress')">
+    <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progress</button>
+</div>
+
+<!-- ══ MODALS ══ -->
+<div class="overlay" id="game-modal">
+  <div class="modal">
+    <h3>Add a game</h3>
+    <div class="msub">One line. What went well, one thing to work on.</div>
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="g-date"></div>
+      <div class="field"><label>Position</label><input type="text" id="g-pos" value="1st five" placeholder="1st five"></div>
+    </div>
+    <div class="field"><label>Opponent</label><input type="text" id="g-opp" placeholder="e.g. Celtic"></div>
+    <div class="field"><label>Did well</label><input type="text" id="g-well" placeholder="e.g. Two good tackles, clean passing"></div>
+    <div class="field"><label>Work on</label><input type="text" id="g-work" placeholder="e.g. Pass off the left"></div>
+    <div class="row2">
+      <button class="btn ghost" onclick="closeModal('game-modal')">Cancel</button>
+      <button class="btn" onclick="saveGame()">Save game</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="mile-modal">
+  <div class="modal">
+    <h3>Add a milestone</h3>
+    <div class="msub">The big ones — first try, player of the day, a game to remember.</div>
+    <div class="field"><label>Date</label><input type="date" id="m-date"></div>
+    <div class="field"><label>What happened</label><input type="text" id="m-txt" placeholder="e.g. First try of the season!"></div>
+    <div class="row2">
+      <button class="btn ghost" onclick="closeModal('mile-modal')">Cancel</button>
+      <button class="btn" onclick="saveMile()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="measure-modal">
+  <div class="modal">
+    <h3>Add a measurement</h3>
+    <div class="msub">Every few months is plenty — just to watch yourself grow.</div>
+    <div class="field"><label>Date</label><input type="date" id="me-date"></div>
+    <div class="row2">
+      <div class="field"><label>Height (cm)</label><input type="number" id="me-height" inputmode="decimal" placeholder="143"></div>
+      <div class="field"><label>Weight (kg)</label><input type="number" id="me-weight" inputmode="decimal" placeholder="39.5"></div>
+    </div>
+    <div class="row2">
+      <button class="btn ghost" onclick="closeModal('measure-modal')">Cancel</button>
+      <button class="btn" onclick="saveMeasure()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="quiz-modal">
+  <div class="modal">
+    <div id="quiz-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════ DATA ══════════ */
+const SKILLS = [
+  {g:'Handling', ic:'M4 12h16M4 12l4-4M4 12l4 4', items:[
+    {id:'pass-l', nm:'Pass off the left hand', focus:true},
+    {id:'pass-r', nm:'Pass off the right hand', focus:true},
+    {id:'catch-move', nm:'Catch a pass on the move, both sides'},
+    {id:'catch-high', nm:'Catch a high ball'},
+    {id:'offload', nm:'Offload in contact'},
+  ]},
+  {g:'Contact', ic:'M12 3v18M5 8l7-5 7 5', items:[
+    {id:'tackle', nm:'Safe tackle — below the sternum, head behind', focus:true},
+    {id:'feet', nm:'Get to your feet quickly after contact'},
+    {id:'bodypos', nm:'Low body position & leg drive'},
+  ]},
+  {g:'Running & Evasion', ic:'M6 18L18 6M8 6h10v10', items:[
+    {id:'sidestep', nm:'Side-step off both feet'},
+    {id:'pace', nm:'Change of pace (find the gears)'},
+    {id:'accel', nm:'Fast off the mark'},
+    {id:'support', nm:'Run good support lines'},
+  ]},
+  {g:'Kicking', ic:'M4 20l8-8 8 8M12 12V4', items:[
+    {id:'punt', nm:'Punt off both feet'},
+    {id:'grubber', nm:'Grubber kick'},
+  ]},
+  {g:'Game Sense', ic:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 8v4l3 2', items:[
+    {id:'role', nm:'Know your job in attack & defence'},
+    {id:'talk', nm:'Communicate & call the play'},
+  ]},
+  {g:'Athletic Development', ic:'M13 2L5 13h6l-1 9 9-12h-6l1-8z', items:[
+    {id:'skip', nm:'Skip a rope, both directions'},
+    {id:'land', nm:'Land soft & stick the landing'},
+    {id:'jump', nm:'Standing long jump & hop-hop-jump'},
+    {id:'bound', nm:'Bounding strides'},
+    {id:'throw', nm:'Powerful ball throw (chest & overhead)'},
+    {id:'bodyweight', nm:'Bodyweight circuit — press-ups, squats, planks'},
+  ]},
+];
+const TOTAL_SKILLS = SKILLS.reduce((n,g)=>n+g.items.length,0);
+
+const ACH = [
+  {id:'first_train', em:'🏉', nm:'First Run', test:s=>s.sessions>=1},
+  {id:'both_hands', em:'🤲', nm:'Both Hands', test:s=>s.skills['pass-l']&&s.skills['pass-r']},
+  {id:'tackler', em:'🛡️', nm:'Safe Tackler', test:s=>s.skills['tackle']},
+  {id:'streak_3', em:'🔥', nm:'3-Day Streak', test:s=>s.bestStreak>=3},
+  {id:'streak_7', em:'⭐', nm:'Week Warrior', test:s=>s.bestStreak>=7},
+  {id:'first_game', em:'📋', nm:'First Game', test:s=>s.games.length>=1},
+  {id:'five_skills', em:'✋', nm:'5 Skills', test:s=>skillCount(s)>=5},
+  {id:'ten_skills', em:'🌟', nm:'10 Skills', test:s=>skillCount(s)>=10},
+  {id:'all_skills', em:'🏆', nm:'Full Kit', test:s=>skillCount(s)>=TOTAL_SKILLS},
+  {id:'lvl5', em:'🥉', nm:'Level 5', test:s=>levelFor(s.xp).level>=5},
+  {id:'lvl10', em:'🥈', nm:'Level 10', test:s=>levelFor(s.xp).level>=10},
+  {id:'ten_games', em:'📚', nm:'10 Games', test:s=>s.games.length>=10},
+  {id:'law_student', em:'📖', nm:'Law Student', test:s=>s.quizzesDone>=1},
+  {id:'perfect_ref', em:'🎯', nm:'Perfect Ref', test:s=>Object.values(s.quizBest||{}).some(v=>v===100)},
+  {id:'rule_book', em:'📕', nm:'Rule Book', test:s=>(s.quizBest.a||0)>=80&&(s.quizBest.b||0)>=80},
+  {id:'fuelled', em:'🥗', nm:'Fuelled Up', test:s=>Object.values(s.habits||{}).some(d=>HABITS.every(h=>d[h.id]))},
+  {id:'hydration', em:'💧', nm:'Hydration Hero', test:s=>countHabitDays(s,'water')>=7},
+  {id:'rested', em:'😴', nm:'Well Rested', test:s=>countHabitDays(s,'sleep')>=7},
+  {id:'growing', em:'📏', nm:'Growing Strong', test:s=>(s.measurements||[]).length>=3},
+];
+
+const LEVEL_TITLES = ['Club Junior','Club Junior','Rising Player','Rising Player','Team Leader',
+  'Team Leader','Standout','Standout','Rep Contender','Rep Contender','Rep Player'];
+
+/* ══════════ FUEL HABITS ══════════ */
+const HABITS = [
+  {id:'breakfast', em:'🍳', nm:'Ate a good breakfast'},
+  {id:'plate', em:'🍽️', nm:'Protein + carb + colour at meals'},
+  {id:'water', em:'💧', nm:'Water only — no fizzy or energy drinks'},
+  {id:'recovery', em:'🥛', nm:'Recovery food after training or a game'},
+  {id:'veg', em:'🥦', nm:'Ate fruit & veg'},
+  {id:'sleep', em:'😴', nm:'Slept 9–12 hours'},
+];
+
+/* ══════════ RULES QUIZ ══════════ */
+const QUIZ = {
+  a: { title:'Grade Rules — Small Blacks U11', qs:[
+    {q:'In U11, where must a tackle make contact?', o:['Below the sternum (the tummy)','Around the shoulders','Anywhere on the body','Below the knees'], a:0, why:'U11 tackles must target and first contact below the sternum — safety first.'},
+    {q:'Can you tackle a player whose feet are off the ground?', o:['No, never','Yes, if they have the ball','Only in the 22','Yes'], a:0, why:'You must never tackle a player in the air — it is dangerous play.'},
+    {q:'How many players are in a U11 scrum?', o:['5','8','3','6'], a:0, why:'U11 scrums have 5 players, with no pushing and no contest.'},
+    {q:'Is there pushing in a U11 scrum?', o:['No pushing','Yes, up to 1.5m','Only the front row','Yes'], a:0, why:'At U11 the scrum is uncontested — no push. It restarts play, nothing more.'},
+    {q:'How many players are in a U11 lineout?', o:['5','7','2','8'], a:0, why:'Five players in the U11 lineout — and lineouts start being contested at U11.'},
+    {q:'Can you kick the ball in general play at U11?', o:['No kicking in general play','Yes, anytime','Only grubbers','Only in your 22'], a:0, why:'No kicking in general play at U11 — it keeps the ball in hand and builds skills.'},
+    {q:'What happens with a penalty at U11?', o:['It is tapped on the ground','Kicked at goal for 3','Kicked to touch','A free scrum'], a:0, why:'All U11 penalties are tapped on the ground — no kicks at goal or to touch.'},
+    {q:'How big can a U11 field be?', o:['No more than 70m × 40m','100m × 70m','50m × 30m','Any size'], a:0, why:'U11 uses a smaller field — up to 70m long and 40m wide.'},
+    {q:'How long is a U11 game?', o:['4 quarters of 5 minutes','2 halves of 40 minutes','2 halves of 20 minutes','3 periods of 10'], a:0, why:'Four 5-minute quarters — 20 minutes of play.'},
+    {q:'How does play restart after a team scores?', o:['A punt or drop kick from halfway','A scrum','A lineout','A tap on the tryline'], a:0, why:'The other team restarts with a punt or drop kick from halfway, opponents back 5m.'},
+  ]},
+  b: { title:'The National Game — Full Laws', qs:[
+    {q:'How many points is a try?', o:['5','3','2','7'], a:0, why:'A try is worth 5 points — the main way to score.'},
+    {q:'How many points is a conversion?', o:['2','3','5','1'], a:0, why:'A successful conversion after a try adds 2 points.'},
+    {q:'How many points is a penalty kick at goal?', o:['3','2','5','1'], a:0, why:'A penalty kicked through the posts is worth 3 points.'},
+    {q:'Which way can you pass the ball?', o:['Sideways or backwards','Forwards','Any direction','Only backwards'], a:0, why:'You can never pass forward — the ball must go sideways or back.'},
+    {q:'What is it called if you knock the ball forward?', o:['A knock-on','A forward pass','A fumble','A turnover'], a:0, why:'Dropping or knocking the ball forward is a knock-on — a scrum to the other team.'},
+    {q:'What must a tackler do straight after a tackle?', o:['Release the player and roll away','Grab the ball','Stay on top','Stand up and run'], a:0, why:'The tackler must release and roll away so the game can continue fairly.'},
+    {q:'Who is allowed to talk to the referee?', o:['The captain','Anyone','The forwards','The coach'], a:0, why:'Only the captain speaks to the ref — respect for the referee is part of the game.'},
+    {q:'How many players per team on the field?', o:['15','13','12','11'], a:0, why:'Full rugby union is 15 a side.'},
+    {q:'How many players are in a full scrum?', o:['8','5','6','7'], a:0, why:'A full contested scrum has 8 forwards from each team.'},
+    {q:'Where must a lineout throw go?', o:['Straight down the middle','To your own side','To the back','Anywhere'], a:0, why:'The throw must go straight down the middle of the two lines.'},
+    {q:'What is formed when players bind over the ball on the ground?', o:['A ruck','A maul','A scrum','A lineout'], a:0, why:'A ruck forms on the ground after a tackle; a maul is the same idea but standing up.'},
+    {q:'Being in front of a teammate who last played the ball is…', o:['Offside','Onside','A knock-on','Fair play'], a:0, why:'You are offside if you are in front of the ball or the teammate who last played it.'},
+  ]},
+};
+
+/* ══════════ PATHWAY ══════════ */
+const PATHWAY = [
+  {n:'Small Blacks — Club Junior', a:'6–12', d:'Club rugby at Southern, Hinds. Fun, fundamentals, every position, more ball in hand.'},
+  {n:'Intermediate age-grade', a:'11–13', d:'Bigger field, real tackling laws by age, positions start to settle.'},
+  {n:'Rep / Development squads', a:'12–15', d:'District & union age-grade teams (U13–U16). First selection hurdles, skills camps.'},
+  {n:'Secondary School 1st XV', a:'13–18', d:'The biggest shop window in NZ rugby. A strong school programme matters most here.'},
+  {n:'Provincial age-grade', a:'15–18', d:'Mid Canterbury / Canterbury U16 & U18 reps. Feeds national selection.'},
+  {n:'National age-grade', a:'17–18', d:'NZ Schools / NZ U18 — the elite schoolboy teams. A genuine All Black feeder.'},
+  {n:'Academy', a:'18–20', d:'Crusaders / Canterbury development contract. Strength, skill and nutrition go pro.'},
+  {n:'NZ U20 — Baby Blacks', a:'19–20', d:'The last age-grade rung before the pro game. Most modern All Blacks came through here.'},
+  {n:'NPC', a:'18+', d:'The provincial championship. The proving ground.'},
+  {n:'Super Rugby — Crusaders', a:'19+', d:'Full professional rugby. The direct feeder to the national side.'},
+  {n:'All Blacks', a:'20+', d:'The goal. Bred in, not managed in — built one rung at a time.', goal:true},
+];
+
+/* ══════════ STATE ══════════ */
+const KEY='levi_rugby_v1';
+let S = load();
+
+function freshState(){
+  return {
+    xp:0, sessions:0, streak:0, bestStreak:0, lastTrain:null,
+    trainedDates:[], skills:{}, games:[],
+    milestones:[{date:'2026-07-18', txt:"Started my Road to Black with Dad 🏉"}],
+    achievements:[],
+    focus:{name:'Tackling & Passing'},
+    habits:{}, quizBest:{}, quizzesDone:0,
+    pathwayStage:1,
+    measurements:[{date:'2026-07-18', height:143, weight:39.5}],
+  };
+}
+function load(){
+  try{ const s=JSON.parse(localStorage.getItem(KEY)); return s?Object.assign(freshState(),s):freshState(); }
+  catch(e){ return freshState(); }
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ══════════ HELPERS ══════════ */
+function skillCount(s){ return Object.values(s.skills).filter(Boolean).length; }
+function todayISO(){ const d=new Date(); return d.toISOString().slice(0,10); }
+function levelFor(xp){
+  // rising curve: level n needs 100*n cumulative-ish
+  let lvl=1, need=100, total=0;
+  while(xp >= total+need){ total+=need; lvl++; need=Math.round(need*1.35); }
+  return {level:lvl, floor:total, next:total+need};
+}
+function daysToSaturday(){
+  const d=new Date(); const day=d.getDay(); // 0 Sun .. 6 Sat
+  let diff=(6-day+7)%7; if(diff===0) return 0; return diff;
+}
+function fmtDate(iso){
+  if(!iso) return '';
+  const [y,m,dd]=iso.split('-'); const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return dd+' '+mo[parseInt(m,10)-1];
+}
+function countHabitDays(s,id){ return Object.values(s.habits||{}).filter(d=>d[id]).length; }
+function todayHabits(){ return S.habits[todayISO()] || (S.habits[todayISO()]={}); }
+function dayComplete(iso){ const day=S.habits[iso]; return !!(day && HABITS.every(h=>day[h.id])); }
+function fuelStreak(){
+  // consecutive fully-completed days, ending at today (or yesterday if today's not done yet)
+  let n=0; const d=new Date();
+  if(!dayComplete(todayISO())) d.setDate(d.getDate()-1);
+  for(let i=0;i<180;i++){
+    if(dayComplete(d.toISOString().slice(0,10))) n++; else break;
+    d.setDate(d.getDate()-1);
+  }
+  return n;
+}
+
+/* ══════════ XP + ACHIEVEMENTS ══════════ */
+function addXP(n, why){
+  S.xp += n;
+  toast('+'+n+' XP'+(why?'  ·  '+why:''));
+  checkAch();
+}
+function checkAch(){
+  let newOnes=[];
+  ACH.forEach(a=>{
+    if(!S.achievements.includes(a.id) && a.test(S)){
+      S.achievements.push(a.id); newOnes.push(a);
+    }
+  });
+  if(newOnes.length){
+    setTimeout(()=>toast(newOnes[0].em+'  '+newOnes[0].nm+' unlocked!'), 900);
+  }
+}
+
+/* ══════════ ACTIONS ══════════ */
+function logTraining(){
+  const t=todayISO();
+  if(S.lastTrain===t){ toast('Already logged today 💪'); return; }
+  // streak logic
+  const y=new Date(); y.setDate(y.getDate()-1); const yISO=y.toISOString().slice(0,10);
+  if(S.lastTrain===yISO) S.streak+=1; else S.streak=1;
+  if(S.streak>S.bestStreak) S.bestStreak=S.streak;
+  S.lastTrain=t; S.sessions+=1;
+  if(!S.trainedDates.includes(t)) S.trainedDates.push(t);
+  if(S.trainedDates.length>120) S.trainedDates=S.trainedDates.slice(-120);
+  addXP(20,'training');
+  save(); renderAll();
+}
+function toggleSkill(id){
+  const was=!!S.skills[id];
+  S.skills[id]=!was;
+  if(!was){ addXP(50,'skill unlocked'); }
+  save(); renderAll();
+}
+function saveGame(){
+  const g={
+    date:document.getElementById('g-date').value||todayISO(),
+    pos:document.getElementById('g-pos').value.trim(),
+    opp:document.getElementById('g-opp').value.trim(),
+    well:document.getElementById('g-well').value.trim(),
+    work:document.getElementById('g-work').value.trim(),
+  };
+  S.games.unshift(g);
+  closeModal('game-modal');
+  addXP(30,'game logged');
+  save(); renderAll();
+}
+function saveMile(){
+  const txt=document.getElementById('m-txt').value.trim();
+  if(!txt){ closeModal('mile-modal'); return; }
+  S.milestones.unshift({date:document.getElementById('m-date').value||todayISO(), txt});
+  closeModal('mile-modal');
+  addXP(15,'milestone');
+  save(); renderAll();
+}
+function toggleHabit(id){
+  const day=todayHabits();
+  const wasComplete=dayComplete(todayISO());
+  const was=!!day[id];
+  day[id]=!was;
+  if(!was) addXP(5,'fuel');
+  // all-6 bonus, once per day
+  if(!wasComplete && dayComplete(todayISO())){ addXP(20,'fully fuelled!'); }
+  save(); renderAll();
+}
+
+/* ── QUIZ ENGINE ── */
+let Q=null;
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor((i+1)*pseudo(i)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let _seed=1;
+function pseudo(i){ _seed=(_seed*9301+49297+i*233)%233280; return _seed/233280; }
+function startQuiz(track){
+  _seed=(Date.now?Date.now():1)%233280 + 1;
+  const bank=QUIZ[track];
+  const qs=shuffle(bank.qs).slice(0,8).map(q=>{
+    const order=shuffle(q.o.map((t,i)=>({t,correct:i===q.a})));
+    return {q:q.q, why:q.why, opts:order};
+  });
+  Q={track, title:bank.title, qs, i:0, correct:0, answered:false};
+  document.getElementById('quiz-modal').classList.add('on');
+  renderQuiz();
+}
+function renderQuiz(){
+  const b=document.getElementById('quiz-body');
+  if(Q.i>=Q.qs.length){ return finishQuiz(); }
+  const item=Q.qs[Q.i];
+  let opts=item.opts.map((o,idx)=>
+    '<button class="qopt" id="qo-'+idx+'" onclick="answerQuiz('+idx+')">'+o.t+'</button>'
+  ).join('');
+  b.innerHTML=
+    '<div class="q-count">'+Q.title+'</div>'
+    +'<div class="q-bar"><div style="width:'+Math.round(Q.i/Q.qs.length*100)+'%"></div></div>'
+    +'<div class="q-count" style="margin-bottom:8px">Question '+(Q.i+1)+' of '+Q.qs.length+'</div>'
+    +'<div class="q-text">'+item.q+'</div>'
+    +'<div id="q-opts">'+opts+'</div>'
+    +'<div id="q-after"></div>';
+}
+function answerQuiz(idx){
+  if(Q.answered) return;
+  Q.answered=true;
+  const item=Q.qs[Q.i];
+  item.opts.forEach((o,i)=>{
+    const el=document.getElementById('qo-'+i);
+    el.onclick=null;
+    if(o.correct) el.classList.add('correct');
+    else if(i===idx) el.classList.add('wrong');
+    else el.classList.add('dim');
+  });
+  if(item.opts[idx].correct) Q.correct++;
+  const label = Q.i===Q.qs.length-1 ? 'See result' : 'Next question';
+  document.getElementById('q-after').innerHTML=
+    '<div class="q-why">'+(item.opts[idx].correct?'✅ ':'❌ ')+item.why+'</div>'
+    +'<button class="btn" onclick="nextQuiz()">'+label+'</button>';
+}
+function nextQuiz(){ Q.i++; Q.answered=false; renderQuiz(); }
+function finishQuiz(){
+  const pct=Math.round(Q.correct/Q.qs.length*100);
+  const gained=Q.correct*5 + (pct===100?15:0);
+  S.quizzesDone=(S.quizzesDone||0)+1;
+  if(pct > (S.quizBest[Q.track]||0)) S.quizBest[Q.track]=pct;
+  const msg = pct===100?'Perfect! You know your laws.':pct>=80?'Great — nearly there.':pct>=50?'Good start — try again to beat it.':'Keep learning — you\'ll get it.';
+  document.getElementById('quiz-body').innerHTML=
+    '<div class="q-result">'
+    +'<div class="big'+(pct>=80?' gold':'')+'">'+pct+'%</div>'
+    +'<div class="msg">'+Q.correct+' of '+Q.qs.length+' right</div>'
+    +'<div class="msg">'+msg+'</div>'
+    +'<div class="q-why" style="text-align:left;margin-top:14px">Earned +'+gained+' XP'+(pct===100?' (perfect bonus!)':'')+'</div>'
+    +'<div class="row2" style="margin-top:6px">'
+    +'<button class="btn ghost" onclick="closeQuiz()">Done</button>'
+    +'<button class="btn" onclick="startQuiz(\''+Q.track+'\')">Try again</button>'
+    +'</div></div>';
+  addXP(gained,'rules quiz');
+  save(); renderRules(); renderProgress(); renderHome();
+}
+function closeQuiz(){ Q=null; closeModal('quiz-modal'); }
+
+/* ── PATHWAY ── */
+function openPathway(){ renderPathway(); showTab('pathway'); }
+
+/* ── MEASUREMENTS ── */
+function openMeasure(){ document.getElementById('me-date').value=todayISO(); document.getElementById('measure-modal').classList.add('on'); }
+function saveMeasure(){
+  const h=parseFloat(document.getElementById('me-height').value);
+  const w=parseFloat(document.getElementById('me-weight').value);
+  if(!h && !w){ closeModal('measure-modal'); return; }
+  S.measurements.push({date:document.getElementById('me-date').value||todayISO(), height:h||null, weight:w||null});
+  S.measurements.sort((a,b)=>a.date<b.date?-1:1);
+  closeModal('measure-modal');
+  addXP(10,'measurement');
+  save(); renderProgress();
+}
+
+/* ══════════ RENDER ══════════ */
+function renderAll(){ renderHome(); renderTrain(); renderFuel(); renderRules(); renderProgress(); renderPathway(); }
+
+function renderPathway(){
+  const cur=S.pathwayStage||1;
+  let html='';
+  PATHWAY.forEach((st,idx)=>{
+    const stage=idx+1;
+    const state = stage<cur?'done' : stage===cur?'current' : 'future';
+    const isGoal=st.goal;
+    const nodeCls = isGoal?'goal' : state;
+    const nodeInner = isGoal?'🖤' : (state==='done'?'✓':stage);
+    const connect = idx<PATHWAY.length-1 ? '<div class="pw-connect'+(stage<cur?' done':'')+'"></div>' : '';
+    html+='<div class="pw-rung">'
+      +'<div class="pw-rail"><div class="pw-node '+nodeCls+'">'+nodeInner+'</div>'+connect+'</div>'
+      +'<div class="pw-card '+(isGoal?'goal':state)+'">'
+        +'<div><span class="n">'+st.n+'</span><span class="a">'+st.a+'</span></div>'
+        +'<div class="d">'+st.d+'</div>'
+        +(state==='current'?'<div class="badge">◄ You are here</div>':'')
+      +'</div></div>';
+  });
+  document.getElementById('pw-list').innerHTML=html;
+}
+
+function sparkline(pts, color){
+  // pts: array of numbers (already filtered non-null). Returns responsive SVG string.
+  const W=300, H=70, pad=8;
+  if(pts.length===1){
+    return '<svg viewBox="0 0 '+W+' '+H+'"><circle cx="'+(W/2)+'" cy="'+(H/2)+'" r="4" fill="'+color+'"/></svg>';
+  }
+  const min=Math.min(...pts), max=Math.max(...pts), rng=(max-min)||1;
+  const step=(W-pad*2)/(pts.length-1);
+  const xy=pts.map((v,i)=>[pad+i*step, H-pad-((v-min)/rng)*(H-pad*2)]);
+  const line=xy.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const dots=xy.map(p=>'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3" fill="'+color+'"/>').join('');
+  return '<svg viewBox="0 0 '+W+' '+H+'"><path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+dots+'</svg>';
+}
+
+function renderGrowth(){
+  const ms=(S.measurements||[]).slice().sort((a,b)=>a.date<b.date?-1:1);
+  const latest=ms[ms.length-1]||{};
+  document.getElementById('p-height').textContent=latest.height!=null?latest.height:'–';
+  document.getElementById('p-weight').textContent=latest.weight!=null?latest.weight:'–';
+  document.getElementById('p-growthlatest').textContent=ms.length?('as at '+fmtDate(latest.date)):'';
+
+  const hPts=ms.filter(m=>m.height!=null).map(m=>m.height);
+  const wPts=ms.filter(m=>m.weight!=null).map(m=>m.weight);
+  const el=document.getElementById('p-growth-chart');
+  if(ms.length<2){
+    el.innerHTML='<div class="mini-note">Add another measurement in a few months to see your growth line.</div>';
+    return;
+  }
+  el.innerHTML=
+    '<div class="chart">'+sparkline(hPts, getComputedStyle(document.documentElement).getPropertyValue('--fern').trim())+'</div>'
+    +'<div class="chart">'+sparkline(wPts, getComputedStyle(document.documentElement).getPropertyValue('--gold').trim())+'</div>'
+    +'<div class="chart-legend"><span><span class="dotc" style="background:var(--fern)"></span>Height cm</span>'
+    +'<span><span class="dotc" style="background:var(--gold)"></span>Weight kg</span></div>';
+}
+
+function renderFuel(){
+  const day=S.habits[todayISO()]||{};
+  const done=HABITS.filter(h=>day[h.id]).length;
+  document.getElementById('f-ring').textContent=done+'/'+HABITS.length;
+  document.getElementById('f-streak').textContent=fuelStreak();
+  document.getElementById('f-habits').innerHTML=HABITS.map(h=>{
+    const on=!!day[h.id];
+    return '<div class="habit'+(on?' on':'')+'" onclick="toggleHabit(\''+h.id+'\')">'
+      +'<div class="hem">'+h.em+'</div><div class="hn">'+h.nm+'</div>'
+      +'<div class="check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div></div>';
+  }).join('');
+}
+
+function renderRules(){
+  ['a','b'].forEach(tk=>{
+    const el=document.getElementById('r-best-'+tk);
+    const best=S.quizBest[tk];
+    el.textContent = best!=null ? ('Best: '+best+'%'+(best===100?' 🎯':'')) : 'Not tried yet';
+  });
+}
+
+function renderHome(){
+  const L=levelFor(S.xp);
+  document.getElementById('h-lvlname').textContent='Level '+L.level;
+  document.getElementById('h-lvltitle').textContent=LEVEL_TITLES[Math.min(L.level-1,LEVEL_TITLES.length-1)];
+  const into=S.xp-L.floor, span=L.next-L.floor;
+  document.getElementById('h-xpfill').style.width=Math.round(into/span*100)+'%';
+  document.getElementById('h-xpnow').textContent=S.xp+' XP';
+  document.getElementById('h-xpnext').textContent=(L.next-S.xp)+' XP to Level '+(L.level+1);
+  document.getElementById('h-streak').textContent=S.streak;
+  document.getElementById('h-skills').textContent=skillCount(S);
+  document.getElementById('h-sessions').textContent=S.sessions;
+
+  const t=todayISO();
+  const btn=document.getElementById('h-trainbtn'), lbl=document.getElementById('h-trainlabel');
+  if(S.lastTrain===t){ btn.classList.add('done'); lbl.textContent='Trained today ✓  ·  come back tomorrow'; }
+  else{ btn.classList.remove('done'); lbl.textContent='Log today\'s training'; }
+
+  const d=daysToSaturday();
+  document.getElementById('h-satdays').textContent = d===0?'0':d;
+  document.getElementById('h-satlabel').textContent = d===0?'Game day — today!':'Game day (Sat)';
+}
+
+function renderTrain(){
+  const t=todayISO();
+  const logged=S.lastTrain===t;
+  const lb=document.getElementById('t-logbtn'), ll=document.getElementById('t-loglabel');
+  if(logged){ lb.classList.add('done'); ll.textContent='Trained today ✓'; }
+  else{ lb.classList.remove('done'); ll.textContent='Log today\'s training  ·  +20 XP'; }
+
+  let html='';
+  SKILLS.forEach(g=>{
+    html+='<div class="grp"><div class="grp-h"><svg class="ic" viewBox="0 0 24 24">'
+      +'<path d="'+g.ic+'"/></svg>'+g.g+'</div>';
+    g.items.forEach(it=>{
+      const on=!!S.skills[it.id];
+      html+='<div class="skill'+(on?' on':'')+(it.focus?' focus-s':'')+'" onclick="toggleSkill(\''+it.id+'\')">'
+        +'<div class="check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>'
+        +'<div class="nm">'+it.nm+'</div>'
+        +(it.focus?'<div class="fb">Focus</div>':'')
+        +'</div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('t-skills').innerHTML=html;
+}
+
+function renderProgress(){
+  document.getElementById('p-xp').textContent=S.xp;
+  document.getElementById('p-skills').textContent=skillCount(S);
+  document.getElementById('p-games').textContent=S.games.length;
+  renderGrowth();
+
+  // achievements
+  let ah='';
+  ACH.forEach(a=>{
+    const got=S.achievements.includes(a.id);
+    ah+='<div class="ach'+(got?' got':'')+'"><div class="em">'+a.em+'</div><div class="an">'+a.nm+'</div></div>';
+  });
+  document.getElementById('p-ach').innerHTML=ah;
+  document.getElementById('p-achcount').textContent=S.achievements.length+' / '+ACH.length;
+
+  // games
+  const gl=document.getElementById('p-games-list');
+  if(!S.games.length){ gl.innerHTML='<div class="empty">No games logged yet.<br>Add one after Saturday.</div>'; }
+  else{
+    gl.innerHTML=S.games.map(g=>{
+      const bits=[];
+      if(g.well) bits.push('✅ '+g.well);
+      if(g.work) bits.push('🎯 '+g.work);
+      return '<div class="li"><div class="d">'+fmtDate(g.date)+'</div><div class="body">'
+        +'<div class="t">'+(g.opp||'Game')+(g.pos?' · '+g.pos:'')+'</div>'
+        +(bits.length?'<div class="s">'+bits.join('<br>')+'</div>':'')+'</div></div>';
+    }).join('');
+  }
+
+  // milestones
+  const ml=document.getElementById('p-miles');
+  const rows=S.milestones.map(m=>
+    '<div class="li"><div class="d">'+fmtDate(m.date)+'</div><div class="body"><div class="t">'+m.txt+'</div></div></div>'
+  ).join('');
+  ml.innerHTML=rows+'<button class="btn ghost sm" onclick="openMile()" style="margin-top:12px">+ Add a milestone</button>';
+}
+
+/* ══════════ UI PLUMBING ══════════ */
+function showTab(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===id));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+  window.scrollTo(0,0);
+}
+function openTrainTab(){
+  if(S.lastTrain!==todayISO()){ logTraining(); }
+  showTab('train');
+}
+function openGame(){ document.getElementById('g-date').value=todayISO(); document.getElementById('game-modal').classList.add('on'); }
+function openMile(){ document.getElementById('m-date').value=todayISO(); document.getElementById('mile-modal').classList.add('on'); }
+function closeModal(id){ document.getElementById(id).classList.remove('on'); }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('on'); }));
+
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast'); el.textContent=msg;
+  el.classList.add('show'); clearTimeout(toastT);
+  toastT=setTimeout(()=>el.classList.remove('show'),1900);
+}
+
+/* ══════════ BOOT ══════════ */
+renderAll();
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+</script>
+</body>
+</html>
