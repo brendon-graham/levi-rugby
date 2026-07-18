@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.5.0">
+<meta name="app-version" content="0.6.0">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -257,6 +257,29 @@ body{
 .plate .p3{background:#122a1c;color:#8ff0b6}
 .plate .em{font-size:20px;display:block;margin-bottom:4px}
 
+/* ── SESSION (Train) ── */
+.sess-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:14px 16px;margin-bottom:10px}
+.sb-head{font-size:12px;font-weight:800;color:var(--fern);text-transform:uppercase;letter-spacing:.8px;
+  display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.sb-head span{color:var(--text2);font-weight:700;text-transform:none;letter-spacing:0;font-size:11px}
+.sb-item{padding:10px 0}
+.sb-item + .sb-item{border-top:1px solid var(--border)}
+.sb-d{font-size:14.5px;font-weight:700;line-height:1.3}
+.sb-d .sb-t{font-size:11.5px;font-weight:800;color:var(--gold);margin-left:8px;white-space:nowrap}
+.sb-c{font-size:12.5px;color:var(--text2);margin-top:4px;line-height:1.5}
+
+/* ── FUEL PLAN + PORTIONS ── */
+.meal{padding:11px 0}
+.meal + .meal{border-top:1px solid var(--border)}
+.meal-m{font-size:12px;font-weight:800;color:var(--fern);text-transform:uppercase;letter-spacing:.6px}
+.meal-f{font-size:14px;font-weight:600;margin-top:3px;line-height:1.4}
+.portion{display:flex;align-items:center;gap:13px;padding:10px 0}
+.portion + .portion{border-top:1px solid var(--border)}
+.portion .pem{font-size:24px;width:30px;text-align:center;flex:0 0 auto}
+.portion .pn{font-size:14.5px;font-weight:800}
+.portion .pn span{color:var(--gold);font-weight:800;font-size:13px}
+.portion .pd{font-size:12px;color:var(--text2);margin-top:2px}
+
 /* ── PATHWAY ── */
 .pathway-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .backbtn{width:40px;height:40px;flex:0 0 auto;border-radius:12px;border:1px solid var(--border);
@@ -352,18 +375,9 @@ body{
 
 <!-- ══ TRAIN ══ -->
 <div class="page" id="train">
-  <div class="card focus">
-    <div class="tag">Working on now</div>
-    <div class="ttl">Tackling &amp; Passing</div>
-    <div class="desc">Tap a skill when it's becoming automatic — not just in the backyard, but when you're tired and marked. Gold-edged skills are this block's focus.</div>
-  </div>
-
-  <button class="btn" id="t-logbtn" onclick="logTraining()" style="margin-bottom:6px">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#08120c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-    <span id="t-loglabel">Log today's training  ·  +20 XP</span>
-  </button>
-  <div class="mini-note" style="text-align:center;margin-bottom:6px" id="t-lognote">Do a bit most days. Consistency beats intensity.</div>
-
+  <div id="t-session"></div>
+  <div class="sh" style="margin:20px 4px 10px">Skills to master <span class="count" id="t-skillcount"></span></div>
+  <div class="mini-note" style="margin:0 4px 12px">Tick a skill when it's automatic under pressure — not just in the backyard. Gold = this block's focus.</div>
   <div id="t-skills"></div>
 </div>
 
@@ -409,10 +423,21 @@ body{
 <div class="page" id="fuel">
   <div class="card fuel-hero">
     <div class="ring" id="f-ring">0/6</div>
-    <div class="sub">Today's fuel · <span id="f-streak">0</span> day streak</div>
+    <div class="sub">Today's habits · <span id="f-streak">0</span> day streak</div>
   </div>
 
-  <div class="sh" style="margin:4px 4px 10px">Tick it as you do it — +5 XP each</div>
+  <div class="card">
+    <div class="sh" id="f-plan-title">Today's fuel plan</div>
+    <div id="f-plan"></div>
+    <div class="mini-note" style="margin-top:10px">Eat every 3–4 hours — 3 meals + 2–3 snacks. Water is your drink; no fizzy or energy drinks.</div>
+  </div>
+
+  <div class="card">
+    <div class="sh">How much? Use your hand</div>
+    <div id="f-portions"></div>
+  </div>
+
+  <div class="sh" style="margin:4px 4px 10px">Daily habits — tick as you go · +5 XP each</div>
   <div id="f-habits"></div>
 
   <div class="card">
@@ -663,6 +688,127 @@ const PATHWAY = [
   {n:'All Blacks', a:'20+', d:'The goal. Bred in, not managed in — built one rung at a time.', goal:true},
 ];
 
+/* ══════════ WEEKLY TRAINING PROGRAM ══════════
+   Fixed daily session (indexed by day of week, 0=Sun..6=Sat). Develops every area across
+   the week, extra weight on the current focus block (tackling & passing), with rest built in.
+   Grounded in NZ Small Blacks skill activities + youth athletic-development (LTAD/NSCA). */
+const SESSIONS = [
+  { // 0 Sunday
+    type:'rest', title:'Rest & Recovery', time:'', tag:'Recovery day',
+    intro:"Rest is part of the plan — your body grows and gets stronger when you recover, not when you train.",
+    rest:"<b>Today's job is to recover.</b><br>• Active recovery — ride your bike, go for a swim, muck around outside.<br>• Have a good stretch.<br>• Eat well and get to bed early (9–12 hours).<br><br>No session to tick — the rest counts toward your streak on its own. Back into it tomorrow."
+  },
+  { // 1 Monday
+    type:'session', title:'Skills & Power', time:'20 min', tag:'Passing + athletic',
+    intro:"Hands and explosive power. Do it well, not fast.",
+    blocks:[
+      {name:'Warm-up', time:'3 min', items:[
+        {d:'Get moving', c:'Jog on the spot 1 min, then 10 lunges, 10 arm swings, 10 squats.'},
+      ]},
+      {name:'Passing — both hands', time:'8 min', items:[
+        {d:'Wall passing, LEFT hand', t:'30 passes', c:'Stand 3–4 m from a wall. Ball in both hands out front, swing across your body, point your fingers at the target on follow-through.'},
+        {d:'Wall passing, RIGHT hand', t:'30 passes', c:'Same off the other side. Fingers spread on the seams, not the palms.'},
+      ]},
+      {name:'Power — plyometrics', time:'7 min', items:[
+        {d:'Pogo jumps', t:'3 × 10', c:'Small, fast bounces on the balls of your feet. Stay stiff like a spring.'},
+        {d:'Stick the landing', t:'5 each leg', c:'Jump and land soft — knees bent, chest up, hold it 2 seconds. Quiet landings.'},
+        {d:'Skipping', t:'2 min', c:'A skipping rope is one of the best athletic tools there is.'},
+      ]},
+      {name:'Challenge', time:'2 min', items:[
+        {d:'Both hands in a row', t:'8 each way', c:'8 accurate wall passes in a row off each hand before you stop.'},
+      ]},
+    ]
+  },
+  { // 2 Tuesday
+    type:'club', title:'Club Training', time:'', tag:'Club night',
+    intro:"Turn up, work hard, listen to your coach, and have fun.",
+    rest:"<b>Club night — bring your best.</b><br>• Work hard and back yourself.<br>• Take your focus with you: <b>safe tackles</b> and <b>passing off both hands</b>.<br>• Talk on the field — a 1st five is the boss out there.<br><br>Tick it done when you get home."
+  },
+  { // 3 Wednesday
+    type:'session', title:'Footwork & Speed', time:'18 min', tag:'Evasion + speed',
+    intro:"Beat defenders with your feet, and get faster off the mark.",
+    blocks:[
+      {name:'Warm-up', time:'3 min', items:[
+        {d:'Get moving', c:'Jog, high knees, heel flicks, a few skips. Wake the legs up.'},
+      ]},
+      {name:'Footwork & evasion', time:'8 min', items:[
+        {d:'Zig-zag run', t:'4 runs', c:'Set 6 cones (or shoes) in a zig-zag. Run through, changing direction hard off the OUTSIDE foot.'},
+        {d:'3-step sidestep', t:'6 each way', c:'Run at Dad/a cone, take 3 steps, plant hard on one foot and push off the other way. Sink low, then accelerate.'},
+      ]},
+      {name:'Speed', time:'5 min', items:[
+        {d:'Accelerations', t:'5 × 15 m', c:'Sprint 15 m, walk back to recover. Fast arms, drive the knees. Form before speed — don\'t tense up.'},
+      ]},
+      {name:'Game', time:'2 min', items:[
+        {d:'Beat Dad', t:'best of 5', c:'In a 5 m channel, use a sidestep to get past. Fix him, then go.'},
+      ]},
+    ]
+  },
+  { // 4 Thursday
+    type:'session', title:'Tackling & Strength', time:'20 min', tag:'Tackling focus',
+    intro:"The safe tackle, built up step by step, then a bit of bodyweight strength.",
+    blocks:[
+      {name:'Warm-up', time:'3 min', items:[
+        {d:'Get moving', c:'Jog, lunges, squats, arm swings. Warm and ready before any contact.'},
+      ]},
+      {name:'Tackling technique', time:'9 min', items:[
+        {d:'1. Shape (on knees)', t:'5 reps', c:'Kneel at a bag/cushion. Get your shape: head up, back straight, arms ready. No impact — just the position.'},
+        {d:'2. Walk-through', t:'5 each side', c:'Walking pace onto the bag: shoulder in, cheek to cheek, wrap both arms — the "ring of steel".'},
+        {d:'3. Controlled tackle', t:'5 each side', c:'Jog on at half pace, complete it, leg drive, then straight back to your feet. Aim low — hip/thigh. Chin off chest, eyes open.'},
+      ]},
+      {name:'Strength — bodyweight', time:'6 min', items:[
+        {d:'Circuit × 2', t:'each round', c:'10 press-ups · 12 squats · 20-sec plank · 10 bear crawls. Perfect reps, not many reps.'},
+      ]},
+      {name:'Challenge', time:'2 min', items:[
+        {d:'Clean tackles', t:'5 each side', c:'5 safe tackles each side with the technique spot-on.'},
+      ]},
+    ]
+  },
+  { // 5 Friday
+    type:'light', title:'Light Skills', time:'12 min', tag:'Pre-game · keep it easy',
+    intro:"Game's tomorrow — keep it light and sharp. If it's been a big week, take a full rest instead.",
+    blocks:[
+      {name:'Catching', time:'4 min', items:[
+        {d:'High-ball catches', t:'15 catches', c:'Throw it up (or Dad kicks). Call "mine!", watch it in, catch at the highest point.'},
+      ]},
+      {name:'Kicking', time:'6 min', items:[
+        {d:'Punt, both feet', t:'8 each foot', c:'Drop the ball onto your laces and strike it. Technique and accuracy, not distance.'},
+        {d:'Grubber to a target', t:'8 kicks', c:'Hold the ball upright, head over it, strike the top half so it rolls along the ground through a gap.'},
+      ]},
+      {name:'Finish', time:'2 min', items:[
+        {d:'Easy passing, then stop', c:'A few relaxed passes each hand. Then rest up — save it for tomorrow.'},
+      ]},
+    ]
+  },
+  { // 6 Saturday
+    type:'game', title:'Game Day', time:'', tag:'Match day',
+    intro:"It's game day. This is what the week's work is for.",
+    rest:"<b>Play, enjoy, and learn one thing.</b><br>• Warm up well before kick-off.<br>• Fuel up — check the <b>Fuel</b> tab for game-day food.<br>• Back your skills: pass both hands, tackle safe and low, talk to your team.<br>• Whatever the score — have fun out there.<br><br>Log your game after, in the Progress tab."
+  },
+];
+function dayName(dow){ return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dow]; }
+
+/* ══════════ FUEL — what to eat, not just that you ate ══════════ */
+const FUEL = {
+  portions:[
+    {h:'✋', n:'Protein', d:'meat, venison, chicken, eggs, fish', s:'your palm'},
+    {h:'🤲', n:'Carbs', d:'potato, kūmara, rice, pasta, bread', s:'a cupped hand'},
+    {h:'✊', n:'Veg & fruit', d:'colour on the plate', s:'your fist'},
+    {h:'👍', n:'Fats', d:'butter, oil, nuts, avocado', s:'your thumb'},
+  ],
+  training:[
+    {m:'Breakfast', f:'Porridge or eggs on toast + a glass of milk + fruit.'},
+    {m:'Lunch', f:'Meat or chicken sandwich (wholegrain) + fruit + yoghurt.'},
+    {m:'Dinner', f:'PFE beef or venison + potato / kūmara / rice + 2 veg.'},
+    {m:'Snacks (2–3)', f:'Fruit, cheese, a handful of nuts, yoghurt, milk, wholegrain toast.'},
+  ],
+  gameday:[
+    {m:'2–3 hrs before', f:'Toast + banana + a bit of honey. Carbs for energy, go easy on fat.'},
+    {m:'During the game', f:'Water — sip at every break.'},
+    {m:'Within 1 hr after', f:'Chocolate milk + a sandwich or a meal. Carbs + protein to recover.'},
+    {m:'Rest of the day', f:'Normal meals — protein, carbs and colour on the plate.'},
+  ],
+};
+
 /* ══════════ STATE ══════════ */
 const KEY='levi_rugby_v1';
 let S = load();
@@ -777,17 +923,29 @@ function checkAch(){
 }
 
 /* ══════════ ACTIONS ══════════ */
+function isRestDow(dow){ return dow===0; } // Sunday is the planned rest day
+function computeStreak(){
+  const set=new Set(S.trainedDates||[]);
+  const d=new Date();
+  const dayOk=(dt)=> set.has(dt.toISOString().slice(0,10)) || isRestDow(dt.getDay());
+  // today not-yet-done doesn't break the streak — start from yesterday in that case
+  if(!dayOk(d)) d.setDate(d.getDate()-1);
+  let n=0;
+  for(let i=0;i<400;i++){
+    if(dayOk(d)) n++; else break;
+    d.setDate(d.getDate()-1);
+  }
+  return n;
+}
 function logTraining(){
   const t=todayISO();
-  if(S.lastTrain===t){ toast('Already logged today 💪'); return; }
-  // streak logic
-  const y=new Date(); y.setDate(y.getDate()-1); const yISO=y.toISOString().slice(0,10);
-  if(S.lastTrain===yISO) S.streak+=1; else S.streak=1;
-  if(S.streak>S.bestStreak) S.bestStreak=S.streak;
+  if((S.trainedDates||[]).includes(t)){ toast("Today's session is done 💪"); return; }
+  S.trainedDates.push(t);
+  if(S.trainedDates.length>200) S.trainedDates=S.trainedDates.slice(-200);
   S.lastTrain=t; S.sessions+=1;
-  if(!S.trainedDates.includes(t)) S.trainedDates.push(t);
-  if(S.trainedDates.length>120) S.trainedDates=S.trainedDates.slice(-120);
-  addXP(20,'training');
+  S.streak=computeStreak();
+  if(S.streak>S.bestStreak) S.bestStreak=S.streak;
+  addXP(20,'session done');
   save(); renderAll();
 }
 function toggleSkill(id){
@@ -805,6 +963,7 @@ function saveGame(){
     work:document.getElementById('g-work').value.trim(),
   };
   S.games.unshift(g);
+  if(g.date && !S.trainedDates.includes(g.date)) S.trainedDates.push(g.date); // a game counts as a training day
   closeModal('game-modal');
   addXP(30,'game logged');
   save(); renderAll();
@@ -978,6 +1137,18 @@ function renderFuel(){
   const done=HABITS.filter(h=>day[h.id]).length;
   document.getElementById('f-ring').textContent=done+'/'+HABITS.length;
   document.getElementById('f-streak').textContent=fuelStreak();
+
+  const isGameDay=new Date().getDay()===6;
+  const plan=isGameDay?FUEL.gameday:FUEL.training;
+  document.getElementById('f-plan-title').innerHTML=isGameDay?'Game-day fuel 🏉':'Today\'s fuel plan';
+  document.getElementById('f-plan').innerHTML=plan.map(x=>
+    '<div class="meal"><div class="meal-m">'+x.m+'</div><div class="meal-f">'+x.f+'</div></div>'
+  ).join('');
+  document.getElementById('f-portions').innerHTML=FUEL.portions.map(p=>
+    '<div class="portion"><div class="pem">'+p.h+'</div><div class="pbody"><div class="pn">'+p.n
+    +' <span>= '+p.s+'</span></div><div class="pd">'+p.d+'</div></div></div>'
+  ).join('');
+
   document.getElementById('f-habits').innerHTML=HABITS.map(h=>{
     const on=!!day[h.id];
     return '<div class="habit'+(on?' on':'')+'" onclick="toggleHabit(\''+h.id+'\')">'
@@ -1002,14 +1173,17 @@ function renderHome(){
   document.getElementById('h-xpfill').style.width=Math.round(into/span*100)+'%';
   document.getElementById('h-xpnow').textContent=S.xp+' XP';
   document.getElementById('h-xpnext').textContent=(L.next-S.xp)+' XP to Level '+(L.level+1);
+  S.streak=computeStreak(); if(S.streak>S.bestStreak) S.bestStreak=S.streak;
   document.getElementById('h-streak').textContent=S.streak;
   document.getElementById('h-skills').textContent=skillCount(S);
   document.getElementById('h-sessions').textContent=S.sessions;
 
-  const t=todayISO();
+  const dow=new Date().getDay(), sess=SESSIONS[dow];
+  const doneToday=(S.trainedDates||[]).includes(todayISO());
   const btn=document.getElementById('h-trainbtn'), lbl=document.getElementById('h-trainlabel');
-  if(S.lastTrain===t){ btn.classList.add('done'); lbl.textContent='Trained today ✓  ·  come back tomorrow'; }
-  else{ btn.classList.remove('done'); lbl.textContent='Log today\'s training'; }
+  if(sess.type==='rest'){ btn.classList.remove('done'); lbl.textContent='Today: Rest & recovery  →'; }
+  else if(doneToday){ btn.classList.add('done'); lbl.textContent=sess.title+' done ✓  ·  see Train'; }
+  else{ btn.classList.remove('done'); lbl.textContent="Today: "+sess.title+"  →"; }
 
   const d=daysToSaturday();
   document.getElementById('h-satdays').textContent = d===0?'0':d;
@@ -1017,11 +1191,39 @@ function renderHome(){
 }
 
 function renderTrain(){
-  const t=todayISO();
-  const logged=S.lastTrain===t;
-  const lb=document.getElementById('t-logbtn'), ll=document.getElementById('t-loglabel');
-  if(logged){ lb.classList.add('done'); ll.textContent='Trained today ✓'; }
-  else{ lb.classList.remove('done'); ll.textContent='Log today\'s training  ·  +20 XP'; }
+  const dow=new Date().getDay();
+  const s=SESSIONS[dow];
+  const doneToday=(S.trainedDates||[]).includes(todayISO());
+
+  let sh='<div class="card focus"><div class="tag">'+dayName(dow)+' · '+s.tag+'</div>'
+    +'<div class="ttl">'+s.title+'</div>'
+    +'<div class="desc">'+s.intro+'</div>'
+    +(s.time?'<div class="badge">◷ '+s.time+'</div>':'')+'</div>';
+
+  if(s.blocks){
+    s.blocks.forEach(b=>{
+      sh+='<div class="sess-block"><div class="sb-head">'+b.name+(b.time?'<span>'+b.time+'</span>':'')+'</div>';
+      b.items.forEach(it=>{
+        sh+='<div class="sb-item"><div class="sb-d">'+it.d+(it.t?'<span class="sb-t">'+it.t+'</span>':'')+'</div>'
+          +(it.c?'<div class="sb-c">'+it.c+'</div>':'')+'</div>';
+      });
+      sh+='</div>';
+    });
+  }
+
+  if(s.type==='rest'||s.type==='game'||s.type==='club'){
+    sh+='<div class="card"><div class="mini-note" style="font-size:13.5px;line-height:1.6">'+s.rest+'</div></div>';
+  }
+  if(s.type==='rest'){
+    sh+='<div class="mini-note" style="text-align:center">Enjoy the day off — you\'ve earned it.</div>';
+  } else if(s.type==='game'){
+    sh+='<button class="btn" onclick="showTab(\'progress\');openGame()">Log your game  ·  +30 XP</button>';
+  } else {
+    sh+='<button class="btn '+(doneToday?'done':'')+'" onclick="logTraining()">'
+      +(doneToday?'Session done ✓  ·  great work':'Mark session done  ·  +20 XP')+'</button>';
+  }
+  document.getElementById('t-session').innerHTML=sh;
+  document.getElementById('t-skillcount').textContent=skillCount(S)+' / '+TOTAL_SKILLS;
 
   let html='';
   SKILLS.forEach(g=>{
@@ -1083,10 +1285,7 @@ function showTab(id){
   document.querySelectorAll('.nb').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
   window.scrollTo(0,0);
 }
-function openTrainTab(){
-  if(S.lastTrain!==todayISO()){ logTraining(); }
-  showTab('train');
-}
+function openTrainTab(){ showTab('train'); }
 function openGame(){ document.getElementById('g-date').value=todayISO(); document.getElementById('game-modal').classList.add('on'); }
 function openMile(){ document.getElementById('m-date').value=todayISO(); document.getElementById('mile-modal').classList.add('on'); }
 function closeModal(id){ document.getElementById(id).classList.remove('on'); }
