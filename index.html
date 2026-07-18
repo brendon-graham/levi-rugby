@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.4.1">
+<meta name="app-version" content="0.5.0">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -54,9 +54,14 @@ body{
 .fern path{fill:var(--fern)}
 .brand{font-size:14px;font-weight:800;letter-spacing:.5px}
 .brand .b2{color:var(--text2);font-weight:600}
-.brand-goal{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:1.5px;
+.brand-goal{font-size:10px;font-weight:800;letter-spacing:1.5px;
   text-transform:uppercase;color:var(--fern);border:1px solid var(--fern-dim);
   padding:5px 10px;border-radius:20px}
+.sync-dot{margin-left:auto;width:9px;height:9px;border-radius:50%;flex:0 0 auto;background:var(--text2);transition:background .3s}
+.sync-dot.synced{background:var(--fern);box-shadow:0 0 8px var(--fern)}
+.sync-dot.saving{background:var(--gold)}
+.sync-dot.offline{background:var(--bad)}
+.sync-dot.off{background:var(--border)}
 
 /* ── PAGES ── */
 .page{display:none;padding:6px 16px 20px;max-width:600px;margin:0 auto}
@@ -296,6 +301,7 @@ body{
 <div class="topbar">
   <svg class="fern" viewBox="0 0 24 24"><path d="M12 2c-1 4-1 7 0 20 1-13 1-16 0-20zm0 4c2 1 4 1 6 0-1 2-3 3-6 3zm0 4c2 1 4 1 6 0-1 2-3 3-6 3zm0 4c1.5 .8 3 .8 4.5 0-.8 1.6-2.4 2.4-4.5 2.4zM12 6c-2 1-4 1-6 0 1 2 3 3 6 3zm0 4c-2 1-4 1-6 0 1 2 3 3 6 3zm0 4c-1.5 .8-3 .8-4.5 0 .8 1.6 2.4 2.4 4.5 2.4z"/></svg>
   <div class="brand">LEVI'S ROAD <span class="b2">to Black</span></div>
+  <div class="sync-dot off" id="sync-dot" title="Local only"></div>
   <div class="brand-goal">Goal: All Black</div>
 </div>
 
@@ -671,13 +677,54 @@ function freshState(){
     habits:{}, quizBest:{}, quizzesDone:0,
     pathwayStage:1,
     measurements:[{date:'2026-07-18', height:143, weight:39.5}],
+    updatedAt:0,
   };
 }
 function load(){
   try{ const s=JSON.parse(localStorage.getItem(KEY)); return s?Object.assign(freshState(),s):freshState(); }
   catch(e){ return freshState(); }
 }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function saveLocal(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function save(){ S.updatedAt=Date.now(); saveLocal(); schedulePush(); }
+
+/* ══════════ SYNC (two-way, last-write-wins) ══════════ */
+const SYNC_URL='https://script.google.com/macros/s/AKfycbwt3mVgH6_jEABAFbbNzgU4qku0ZvuOAk00j9QeaeZAhtshz6r40eLv0hXIQfBG_FA9gw/exec';
+function syncEnabled(){
+  // live site syncs; the local preview stays "Local only" so testing never touches Levi's data
+  const h=location.hostname;
+  if(localStorage.getItem('leviSyncTest')==='1') return true;
+  return !(h==='localhost'||h==='127.0.0.1'||h==='0.0.0.0'||h==='');
+}
+let pushTimer=null, pushing=false, pushAgain=false, syncState='off';
+function setSync(st){ syncState=st; const el=document.getElementById('sync-dot'); if(el){ el.className='sync-dot '+st; el.title={synced:'Synced',saving:'Saving…',offline:'Offline — will sync later',off:'Local only'}[st]||''; } }
+function schedulePush(){
+  if(!syncEnabled()){ setSync('off'); return; }
+  setSync('saving');
+  clearTimeout(pushTimer);
+  pushTimer=setTimeout(pushState,1200);
+}
+function pushState(){
+  if(!syncEnabled()) return;
+  if(pushing){ pushAgain=true; return; }
+  pushing=true;
+  fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'push',data:S,updatedAt:S.updatedAt})})
+    .then(r=>r.json()).then(r=>{ setSync(r&&r.ok?'synced':'offline'); })
+    .catch(()=>setSync('offline'))
+    .then(()=>{ pushing=false; if(pushAgain){ pushAgain=false; pushState(); } });
+}
+function pullState(){
+  if(!syncEnabled()){ setSync('off'); return; }
+  fetch(SYNC_URL+'?action=pull',{method:'GET'})
+    .then(r=>r.json()).then(r=>{
+      if(r&&r.ok&&r.data&&Number(r.updatedAt)>(S.updatedAt||0)){
+        S=Object.assign(freshState(), r.data);
+        S.updatedAt=Number(r.updatedAt);
+        saveLocal(); renderAll();
+      }
+      setSync('synced');
+    }).catch(()=>setSync('offline'));
+}
 
 /* ══════════ HELPERS ══════════ */
 function skillCount(s){ return Object.values(s.skills).filter(Boolean).length; }
@@ -1054,6 +1101,10 @@ function toast(msg){
 
 /* ══════════ BOOT ══════════ */
 renderAll();
+setSync(syncEnabled()?'synced':'off');
+pullState();
+setInterval(()=>{ if(!pushing) pullState(); }, 30000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && !pushing) pullState(); });
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 </script>
 </body>
