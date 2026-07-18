@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.7.0">
+<meta name="app-version" content="0.7.1">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -594,6 +594,8 @@ const SKILLS = [
     {id:'sidestep', nm:'Side-step off both feet'},
     {id:'pace', nm:'Change of pace (find the gears)'},
     {id:'accel', nm:'Fast off the mark'},
+    {id:'decel', nm:'Stop hard on top of a marker'},
+    {id:'react-cut', nm:'React, cut, and accelerate'},
     {id:'support', nm:'Run good support lines'},
   ]},
   {g:'Kicking', ic:'M4 20l8-8 8 8M12 12V4', items:[
@@ -700,24 +702,30 @@ const PATHWAY = [
    the week, extra weight on the current focus block (tackling & passing), with rest built in.
    Grounded in NZ Small Blacks skill activities + youth athletic-development (LTAD/NSCA). */
 /* OFF-SEASON two-a-day program: mornings = fitness & power (with Dad), afternoons = skills.
-   5 training days (Mon–Fri), weekends = hunts / recovery. Uses tackle tube, boxing bag,
-   light weights + bands. Light + technique-first + fun — build the engine, keep it safe. */
+   5 training days (Mon-Fri), weekends = hunts / recovery. Uses tackle tube, boxing bag,
+   light weights + bands. Light + technique-first + fun - build the engine, keep it safe.
+   Speed work now follows Rugby Speed Coach principles: quality over quantity, acceleration
+   mechanics, horizontal power, deceleration before agility, then reactive game cues. */
 const PROGRAM = {
   1:{ // Monday
     am:{ title:'Speed & Power', tag:'Morning · with Dad', time:'22 min',
-      intro:'Get explosive. Short and sharp, full effort, rest between.',
+      intro:'Get explosive. Fresh, fast reps only. Stop before the quality drops.',
       blocks:[
-        {name:'Warm-up', time:'4 min', items:[{d:'Wake the legs up', c:'Jog, leg swings, lunges, high knees, 2 build-up runs.'}]},
-        {name:'Plyometrics', time:'8 min', items:[
-          {d:'Pogo jumps', t:'3 × 10', c:'Fast, stiff bounces on the balls of your feet.'},
-          {d:'Broad jumps', t:'5', c:'Jump forward for distance. Land soft and STICK it.'},
-          {d:'Single-leg hops', t:'5 each', c:'Control the landing every time.'},
-          {d:'Bounding', t:'3 × 20 m', c:'Big, springy strides down the paddock.'}]},
-        {name:'Speed', time:'8 min', items:[
-          {d:'Accelerations', t:'6 × 15–20 m', c:'Different starts (standing, lying, 3-point). Fast arms, walk back to recover.'},
-          {d:'Band-resisted starts', t:'optional', c:'Dad holds a band round your waist — drive out hard for 5 m.'}]},
+        {name:'Warm-up', time:'4 min', items:[{d:'Wake the legs up', c:'Jog, leg swings, lunges, fire hydrants, high knees, 2 build-up runs.'}]},
+        {name:'Acceleration shape', time:'5 min', items:[
+          {d:'Wall drill', t:'2 x 5 each leg', c:'Forward lean, straight line from ankle to shoulder, push the ground back.'},
+          {d:'Scissor drill', t:'2 x 6', c:'Arms and legs snap together. Fast arms, knees punching forward.'}]},
+        {name:'Horizontal power', time:'6 min', items:[
+          {d:'Broad jump + stick', t:'4', c:'Jump forward, land soft, freeze for 2 seconds.'},
+          {d:'Power skips for distance', t:'2 x 15 m', c:'Push back hard and travel forward, not just up.'},
+          {d:'Single-leg hop + stick', t:'4 each', c:'Quiet landing, knee tracking over the toes.'}]},
+        {name:'Speed', time:'5 min', items:[
+          {d:'Accelerations', t:'4-6 x 10-20 m', c:'100% effort, then walk back until breathing is normal. Stop while still fast.'},
+          {d:'Load & lift start', t:'4 each leg', c:'Load the front leg, punch out low, then rise smoothly.'},
+          {d:'Band-resisted starts', t:'optional', c:'Dad holds a band round your waist - drive out hard for 5 m.'}]},
         {name:'Finish', time:'2 min', items:[{d:'2 easy strides', c:'Relaxed and fast. Done.'}]},
-      ]},
+      ],
+      note:'Speed coach rule: speed is quality, not volume. Time a few 10-20 m sprints if you can. If he slows down, looks heavy, or stops enjoying it, stop there.' },
     pm:{ title:'Handling', tag:'After school', time:'18 min',
       intro:'Hands. Both sides, every day — your edge as a 1st five.',
       blocks:[
@@ -741,15 +749,17 @@ const PROGRAM = {
         {name:'Core', time:'4 min', items:[{d:'2 rounds', c:'30-sec plank · 20-sec side plank each side · 10 dead-bugs.'}]},
         {name:'Cool down', time:'2 min', items:[{d:'Easy skip', c:'Slow it down, get your breath back.'}]},
       ]},
-    pm:{ title:'Footwork & Evasion', tag:'After school', time:'16 min',
-      intro:'Beat a defender with your feet.',
+    pm:{ title:'Decel & Evasion', tag:'After school', time:'16 min',
+      intro:'Beat a defender by slowing under control, then exploding again.',
       blocks:[
         {name:'Warm-up', time:'2 min', items:[{d:'Ankles & feet', c:'Skips, ankle hops, quick feet.'}]},
-        {name:'Footwork', time:'9 min', items:[
-          {d:'Zig-zag cones', t:'4 runs', c:'Change direction hard off the OUTSIDE foot.'},
-          {d:'3-step sidestep', t:'6 each way', c:'Sink low, plant, push off the other way, accelerate.'},
-          {d:'Change of pace', t:'4 runs', c:'Slow… then explode. Find the gears.'}]},
-        {name:'Game', time:'3 min', items:[{d:'Beat Dad', t:'best of 5', c:'1v1 in a 5 m channel — step and go.'}]},
+        {name:'Stop before you step', time:'6 min', items:[
+          {d:'Sprint-stop marker', t:'5', c:'Sprint 5-8 m and stop right on top of the marker. Not short, not past it.'},
+          {d:'Skater jump + stick', t:'2 x 5 each', c:'Push sideways, land quiet, hold your balance.'}]},
+        {name:'Footwork', time:'5 min', items:[
+          {d:'3-step sidestep', t:'5 each way', c:'Sink low, plant, push away, then accelerate.'},
+          {d:'Change of pace', t:'4 runs', c:'Cruise, brake, then explode. Find the gears.'}]},
+        {name:'Game', time:'3 min', items:[{d:'Beat Dad', t:'best of 5', c:'Dad points left or right late - react, step and go.'}]},
       ]}
   },
   3:{ // Wednesday
@@ -781,18 +791,21 @@ const PROGRAM = {
   },
   4:{ // Thursday
     am:{ title:'Agility & Power', tag:'Morning · with Dad', time:'22 min',
-      intro:'Change direction fast and throw hard.',
+      intro:'Decelerate first, then react and re-accelerate.',
       blocks:[
         {name:'Warm-up', time:'4 min', items:[{d:'Movement prep', c:'Jog, side-steps, carioca, leg swings.'}]},
-        {name:'Agility', time:'8 min', items:[
-          {d:'5-10-5 shuttle', t:'5', c:'Sprint 5 m, back 5, through 10. Stay low in the turns.'},
-          {d:'Mirror drill', t:'4 × 20 sec', c:'Copy Dad\'s movements — react and move.'},
-          {d:'Quick feet', t:'4 sets', c:'Fast feet through a ladder or cones.'}]},
-        {name:'Power', time:'8 min', items:[
+        {name:'Closed change of direction', time:'7 min', items:[
+          {d:'Sprint-stop marker', t:'4', c:'Accelerate hard, then stop right on top of the marker under control.'},
+          {d:'5-10-5 shuttle', t:'4', c:'Brake, plant, push away. Stay low in the turns.'}]},
+        {name:'Reactive agility', time:'7 min', items:[
+          {d:'Mirror drill', t:'4 x 20 sec', c:'Copy Dad\'s movements - react and move.'},
+          {d:'Colour-call cut', t:'6', c:'Dad calls or points left/right late. Brake, cut, accelerate.'}]},
+        {name:'Power', time:'6 min', items:[
           {d:'Bag / med-ball throws', t:'4 × 5', c:'Chest pass, overhead throw, slam. Explode.'},
           {d:'Step-up jumps', t:'4 × 5', c:'Onto a low step, land soft and stick it.'}]},
         {name:'Finish', time:'2 min', items:[{d:'Reaction game', c:'Dad calls, you go. Have fun.'}]},
-      ]},
+      ],
+      note:'Agility is not just quick feet. First learn to brake, then change direction, then react to Dad like a defender.' },
     pm:{ title:'Kicking & Catching', tag:'After school', time:'16 min',
       intro:'A 1st five needs a boot and a safe pair of hands.',
       blocks:[
@@ -1231,7 +1244,7 @@ function renderHome(){
 
   const dow=new Date().getDay(), p=PROGRAM[dow];
   document.getElementById('h-focus').textContent='Off-season — build the engine';
-  document.getElementById('h-focusdesc').textContent='Fitness & power in the mornings with Dad, skills after school. 5 days a week, hunts on the weekend — get fit, get skilled.';
+  document.getElementById('h-focusdesc').textContent='Fitness & power in the mornings with Dad, skills after school. Speed reps stay short, fresh and sharp — get fit, get fast, stay keen.';
   const btn=document.getElementById('h-trainbtn'), lbl=document.getElementById('h-trainlabel');
   if(p.kind==='recovery'){ btn.classList.remove('done'); lbl.textContent='Today: Recovery  →'; }
   else if(p.kind==='hunt'){ btn.classList.remove('done'); lbl.textContent='Today: Hunt / hill day  →'; }
