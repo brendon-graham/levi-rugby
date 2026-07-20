@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.7.1">
+<meta name="app-version" content="0.7.2">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -739,16 +739,22 @@ const PROGRAM = {
       ]}
   },
   2:{ // Tuesday
-    am:{ title:'Conditioning — Boxing Bag', tag:'Morning · with Dad', time:'22 min',
-      intro:'Build the engine and quick feet. Keep moving, keep breathing.',
+    am:{ title:'Power Training', tag:'Morning · with Dad', time:'22 min',
+      intro:'No bag needed today. Sharp power, perfect press-up shape, stop while it still looks good.',
       blocks:[
-        {name:'Warm-up', time:'4 min', items:[{d:'Skip + shadow', c:'Skip rope 2 min, arm circles, light shadow boxing.'}]},
-        {name:'Bag circuit', time:'12 min', items:[
-          {d:'6 rounds · 40 sec on / 20 off', c:'Mix straight punches, hooks, fast hands. Keep your feet moving round the bag.'},
-          {d:'It\'s for fitness, not power', c:'Breathe, stay light on your feet, work the whole round.'}]},
-        {name:'Core', time:'4 min', items:[{d:'2 rounds', c:'30-sec plank · 20-sec side plank each side · 10 dead-bugs.'}]},
-        {name:'Cool down', time:'2 min', items:[{d:'Easy skip', c:'Slow it down, get your breath back.'}]},
-      ]},
+        {name:'Warm-up', time:'4 min', items:[{d:'Move well first', c:'Jog, leg swings, lunges, squats, arm circles, 2 easy build-up runs.'}]},
+        {name:'Power primer', time:'8 min', items:[
+          {d:'Broad jump + stick', t:'4', c:'Jump forward, land soft, freeze for 2 seconds.'},
+          {d:'Power skips', t:'2 x 15 m', c:'Push back hard and travel forward.'},
+          {d:'Squat jump + stick', t:'5', c:'Explode up, land quiet, knees tracking over toes.'}]},
+        {name:'Mike Tyson press-ups', time:'6 min', items:[
+          {d:'Technique sets', t:'3 x 4-6', c:'Feet against a wall if safe, hips back, glide forward into the press-up, elbows tucked. Normal press-ups are fine if form is better.'},
+          {d:'Quality rule', c:'No maxing out. Stop if the back sags, shoulders hurt, or the reps get ugly.'}]},
+        {name:'Core & finish', time:'4 min', items:[
+          {d:'Core', c:'30-sec plank · 20-sec side plank each side · 10 dead-bugs.'},
+          {d:'Cool down', c:'Easy walk, stretch shoulders and legs.'}]},
+      ],
+      note:'This is power practice for a growing 10-year-old: supervised, low volume, perfect shape. If it stops looking sharp, call it done.'},
     pm:{ title:'Decel & Evasion', tag:'After school', time:'16 min',
       intro:'Beat a defender by slowing under control, then exploding again.',
       blocks:[
@@ -763,20 +769,16 @@ const PROGRAM = {
       ]}
   },
   3:{ // Wednesday
-    am:{ title:'Strength — light & smart', tag:'Morning · with Dad', time:'22 min',
-      intro:'Own your bodyweight first. Light weights, PERFECT technique, Dad watching. Never heavy.',
+    am:{ title:'Conditioning — Boxing Bag', tag:'Morning · with Dad', time:'22 min',
+      intro:'Now the bag is set up: build the engine and quick feet. Keep moving, keep breathing.',
       blocks:[
-        {name:'Warm-up', time:'4 min', items:[{d:'Band activation', c:'Band walks, band pull-aparts, glute bridges, bodyweight squats.'}]},
-        {name:'Strength circuit — 3 rounds', time:'14 min', items:[
-          {d:'Goblet squat (light)', t:'8', c:'Hold a light weight at your chest. Chest up, knees out, sit tall.'},
-          {d:'Press-ups', t:'8', c:'Toes or knees. Straight line, chest to the floor.'},
-          {d:'Band rows', t:'12', c:'Pull the band to your chest, squeeze the shoulder blades.'},
-          {d:'Split squats', t:'6 each leg', c:'Bodyweight or very light. Tall and balanced.'},
-          {d:'Farmer carry', t:'20 m', c:'A light weight each hand. Stand tall, walk strong.'},
-          {d:'Plank', t:'30 sec', c:'Straight as a board.'}]},
-        {name:'Cool down', time:'2 min', items:[{d:'Stretch', c:'Legs, back, shoulders.'}]},
-      ],
-      note:'Weights here are for learning good movement and LIGHT resistance — not for lifting heavy or maxing out. Stop the moment your technique slips.' },
+        {name:'Warm-up', time:'4 min', items:[{d:'Skip + shadow', c:'Skip rope 2 min, arm circles, light shadow boxing.'}]},
+        {name:'Bag circuit', time:'12 min', items:[
+          {d:'6 rounds · 40 sec on / 20 off', c:'Mix straight punches, hooks, fast hands. Keep your feet moving round the bag.'},
+          {d:'It\'s for fitness, not power', c:'Breathe, stay light on your feet, work the whole round.'}]},
+        {name:'Core', time:'4 min', items:[{d:'2 rounds', c:'30-sec plank · 20-sec side plank each side · 10 dead-bugs.'}]},
+        {name:'Cool down', time:'2 min', items:[{d:'Easy skip', c:'Slow it down, get your breath back.'}]},
+      ]},
     pm:{ title:'Tackling — the tackle tube', tag:'After school', time:'18 min',
       intro:'The safe tackle, built up step by step on the tube.',
       blocks:[
