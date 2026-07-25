@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.7.2">
+<meta name="app-version" content="0.7.3">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -359,6 +359,11 @@ body{
     <span id="h-trainlabel">Log today's training</span>
   </button>
 
+  <div class="card">
+    <div class="sh">Tomorrow <span class="count" id="h-tomorrow-day"></span></div>
+    <div id="h-tomorrow"></div>
+  </div>
+
   <div class="card tappable" onclick="openPathway()">
     <div class="sh">Where you are</div>
     <div class="rung">
@@ -378,6 +383,7 @@ body{
 <!-- ══ TRAIN ══ -->
 <div class="page" id="train">
   <div id="t-session"></div>
+  <div id="t-tomorrow"></div>
   <div class="sh" style="margin:20px 4px 10px">Skills to master <span class="count" id="t-skillcount"></span></div>
   <div class="mini-note" style="margin:0 4px 12px">Tick a skill when it's automatic under pressure — not just in the backyard. Gold = this block's focus.</div>
   <div id="t-skills"></div>
@@ -1231,6 +1237,42 @@ function renderRules(){
   });
 }
 
+function tomorrowWorkout(){
+  const d=new Date();
+  d.setDate(d.getDate()+1);
+  const dow=d.getDay();
+  return {dow, p:PROGRAM[dow]};
+}
+
+function prepList(p){
+  if(p.kind==='hunt') return ['Light pack', 'Water', 'Food', 'Good shoes'];
+  if(p.kind==='recovery') return ['Good food', 'Early night', 'Easy movement'];
+  const txt=JSON.stringify(p).toLowerCase();
+  const items=['Water bottle'];
+  const add=x=>{ if(!items.includes(x)) items.push(x); };
+  if(txt.includes('ball')||txt.includes('passing')||txt.includes('catch')) add('Rugby ball');
+  if(txt.includes('band')) add('Resistance band');
+  if(txt.includes('marker')||txt.includes('cone')||txt.includes('shuttle')) add('Markers or cones');
+  if(txt.includes('bag')) add('Boxing bag set up');
+  if(txt.includes('tackle tube')) add('Tackle tube');
+  if(txt.includes('skip')) add('Skipping rope');
+  if(txt.includes('wall')) add('Wall space');
+  return items.slice(0,5);
+}
+
+function tomorrowPreviewInner(dow,p){
+  if(p.kind){
+    return '<div class="li"><div class="d">'+dayName(dow).slice(0,3)+'</div><div class="body">'
+      +'<div class="t">'+p.title+'</div><div class="s">'+p.intro+'</div></div></div>'
+      +'<div class="mini-note">Prep: '+prepList(p).join(' · ')+'</div>';
+  }
+  return '<div class="li"><div class="d">AM</div><div class="body"><div class="t">'+p.am.title+'</div>'
+    +'<div class="s">'+p.am.time+' · '+p.am.intro+'</div></div></div>'
+    +'<div class="li"><div class="d">PM</div><div class="body"><div class="t">'+p.pm.title+'</div>'
+    +'<div class="s">'+p.pm.time+' · '+p.pm.intro+'</div></div></div>'
+    +'<div class="mini-note">Prep: '+prepList(p).join(' · ')+'</div>';
+}
+
 function renderHome(){
   const L=levelFor(S.xp);
   document.getElementById('h-lvlname').textContent='Level '+L.level;
@@ -1255,6 +1297,10 @@ function renderHome(){
     if(am&&pm){ btn.classList.add('done'); lbl.textContent='Both done ✓  ·  see Train'; }
     else{ btn.classList.remove('done'); lbl.textContent='Today: '+p.am.title+' + '+p.pm.title+'  →'; }
   }
+
+  const t=tomorrowWorkout();
+  document.getElementById('h-tomorrow-day').textContent=dayName(t.dow);
+  document.getElementById('h-tomorrow').innerHTML=tomorrowPreviewInner(t.dow,t.p);
 
   const d=daysToSaturday();
   document.getElementById('h-satdays').textContent = d===0?'0':d;
@@ -1300,6 +1346,8 @@ function renderTrain(){
     sh+=renderSlot('pm', p.pm);
   }
   document.getElementById('t-session').innerHTML=sh;
+  const t=tomorrowWorkout();
+  document.getElementById('t-tomorrow').innerHTML='<div class="card"><div class="sh">Tomorrow <span class="count">'+dayName(t.dow)+'</span></div>'+tomorrowPreviewInner(t.dow,t.p)+'</div>';
   document.getElementById('t-skillcount').textContent=skillCount(S)+' / '+TOTAL_SKILLS;
 
   let html='';
