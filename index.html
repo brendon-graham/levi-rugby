@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.7.3">
+<meta name="app-version" content="0.8.0">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -658,33 +658,76 @@ const HABITS = [
   {id:'sleep', em:'😴', nm:'Slept 9–12 hours'},
 ];
 
-/* ══════════ RULES QUIZ ══════════ */
+/* ══════════ RULES QUIZ ══════════
+   Each question has a stable id + a difficulty tier d (1 easy, 2 detail, 3 hardest / the
+   full national game). The adaptive engine uses d to unlock tiers as Levi masters the
+   basics, and prioritises new + previously-missed questions. Correct answer is always o[0]
+   in the data (a:0); the engine shuffles option order on screen. Grounded in personal/levi-rugby/rules.md. */
 const QUIZ = {
   a: { title:'Grade Rules — Small Blacks U11', qs:[
-    {q:'In U11, where must a tackle make contact?', o:['Below the sternum (the tummy)','Around the shoulders','Anywhere on the body','Below the knees'], a:0, why:'U11 tackles must target and first contact below the sternum — safety first.'},
-    {q:'Can you tackle a player whose feet are off the ground?', o:['No, never','Yes, if they have the ball','Only in the 22','Yes'], a:0, why:'You must never tackle a player in the air — it is dangerous play.'},
-    {q:'How many players are in a U11 scrum?', o:['5','8','3','6'], a:0, why:'U11 scrums have 5 players, with no pushing and no contest.'},
-    {q:'Is there pushing in a U11 scrum?', o:['No pushing','Yes, up to 1.5m','Only the front row','Yes'], a:0, why:'At U11 the scrum is uncontested — no push. It restarts play, nothing more.'},
-    {q:'How many players are in a U11 lineout?', o:['5','7','2','8'], a:0, why:'Five players in the U11 lineout — and lineouts start being contested at U11.'},
-    {q:'Can you kick the ball in general play at U11?', o:['No kicking in general play','Yes, anytime','Only grubbers','Only in your 22'], a:0, why:'No kicking in general play at U11 — it keeps the ball in hand and builds skills.'},
-    {q:'What happens with a penalty at U11?', o:['It is tapped on the ground','Kicked at goal for 3','Kicked to touch','A free scrum'], a:0, why:'All U11 penalties are tapped on the ground — no kicks at goal or to touch.'},
-    {q:'How big can a U11 field be?', o:['No more than 70m × 40m','100m × 70m','50m × 30m','Any size'], a:0, why:'U11 uses a smaller field — up to 70m long and 40m wide.'},
-    {q:'How long is a U11 game?', o:['4 quarters of 5 minutes','2 halves of 40 minutes','2 halves of 20 minutes','3 periods of 10'], a:0, why:'Four 5-minute quarters — 20 minutes of play.'},
-    {q:'How does play restart after a team scores?', o:['A punt or drop kick from halfway','A scrum','A lineout','A tap on the tryline'], a:0, why:'The other team restarts with a punt or drop kick from halfway, opponents back 5m.'},
+    /* Tier 1 — the U11 basics */
+    {id:'a1', d:1, q:'In U11, where must a tackle make contact?', o:['Below the sternum (the tummy)','Around the shoulders','Anywhere on the body','Below the knees'], a:0, why:'U11 tackles must target and first contact below the sternum — safety first.'},
+    {id:'a2', d:1, q:'Can you tackle a player whose feet are off the ground?', o:['No, never','Yes, if they have the ball','Only in the 22','Yes'], a:0, why:'You must never tackle a player in the air — it is dangerous play.'},
+    {id:'a3', d:1, q:'How many players are in a U11 scrum?', o:['5','8','3','6'], a:0, why:'U11 scrums have 5 players, with no pushing and no contest.'},
+    {id:'a4', d:1, q:'Is there pushing in a U11 scrum?', o:['No pushing','Yes, up to 1.5m','Only the front row','Yes'], a:0, why:'At U11 the scrum is uncontested — no push. It restarts play, nothing more.'},
+    {id:'a5', d:1, q:'How many players are in a U11 lineout?', o:['5','7','2','8'], a:0, why:'Five players in the U11 lineout.'},
+    {id:'a6', d:1, q:'Can you kick the ball in general play at U11?', o:['No kicking in general play','Yes, anytime','Only grubbers','Only in your 22'], a:0, why:'No kicking in general play at U11 — it keeps the ball in hand and builds skills.'},
+    {id:'a7', d:1, q:'What happens with a penalty at U11?', o:['It is tapped on the ground','Kicked at goal for 3','Kicked to touch','A free scrum'], a:0, why:'All U11 penalties are tapped on the ground — no kicks at goal or to touch.'},
+    {id:'a8', d:1, q:'How big can a U11 field be?', o:['No more than 70m × 40m','100m × 70m','50m × 30m','Any size'], a:0, why:'U11 uses a smaller field — up to 70m long and 40m wide.'},
+    {id:'a9', d:1, q:'How long is a U11 game?', o:['4 quarters of 5 minutes','2 halves of 40 minutes','2 halves of 20 minutes','3 periods of 10'], a:0, why:'Four 5-minute quarters — 20 minutes of play.'},
+    {id:'a10', d:1, q:'How does play restart after a team scores?', o:['A punt or drop kick from halfway','A scrum','A lineout','A tap on the tryline'], a:0, why:'The other team restarts with a punt or drop kick from halfway, opponents back 5m.'},
+    /* Tier 2 — U11 detail */
+    {id:'a11', d:2, q:'When do lineouts start being contested?', o:['At U11','At U8','Never in juniors','Only at 15-a-side'], a:0, why:'Lineouts start being contested at U11 — before that they are not.'},
+    {id:'a12', d:2, q:'At a restart after a score, how far back must the other team be?', o:['5 metres','10 metres','The 22','Halfway'], a:0, why:'The receiving team must be at least 5m back at the U11 restart.'},
+    {id:'a13', d:2, q:'How much total playing time is a U11 game?', o:['20 minutes','40 minutes','80 minutes','60 minutes'], a:0, why:'Four quarters of 5 minutes = 20 minutes of play.'},
+    {id:'a14', d:2, q:'Is the U11 scrum contested for the ball?', o:['No contest','Yes, fully','Only the hooker','Yes, with pushing'], a:0, why:'The U11 scrum is uncontested — it just restarts play.'},
+    {id:'a15', d:2, q:'Who is allowed to talk to the referee?', o:['The captain','Anyone','The forwards','The coach'], a:0, why:'Only the captain speaks to the ref — respect for the referee is part of the game, at every grade.'},
+    {id:'a16', d:2, q:'A heavier "dispensated" player at U11 cannot…', o:['Run No.8 off the scrum or be a battering ram','Pass the ball','Score a try','Play in the backs'], a:0, why:'Heavier graded players are restricted for safety — no charging off the scrum or being used as a battering ram.'},
+    {id:'a17', d:2, q:'What is the widest a U11 field can be?', o:['40 metres','70 metres','100 metres','50 metres'], a:0, why:'U11 fields are up to 70m long and 40m wide.'},
+    {id:'a18', d:2, q:'Why must U11 tackles be below the sternum?', o:['Safety — it protects young heads and necks','To make it harder','It looks better','To slow the game down'], a:0, why:'The low tackle height in juniors is all about safety for growing players.'},
+    {id:'a19', d:2, q:'What restarts the game after the other team scores?', o:['Your team kicks from halfway','A scrum on halfway','A lineout','A penalty'], a:0, why:'The team that was scored against restarts with a punt or drop kick from halfway.'},
+    {id:'a20', d:2, q:'Can you kick a U11 penalty at goal for points?', o:['No — it is tapped only','Yes, for 3','Yes, for 2','Only in the 22'], a:0, why:'No kicks at goal in U11 — every penalty is tapped on the ground.'},
+    /* Tier 3 — connecting to the national game he is building toward */
+    {id:'a21', d:3, q:'In the full 15-a-side game, how many players are in a scrum?', o:['8','5','6','3'], a:0, why:'The full contested scrum has 8 forwards a side — you build toward it from the U11 5-player scrum.'},
+    {id:'a22', d:3, q:'How big can a full national-game field be?', o:['Up to 100m × 70m','70m × 40m','120m × 80m','Any size'], a:0, why:'The full field is much bigger — up to 100m long and 70m wide.'},
+    {id:'a23', d:3, q:'In the full game, how high can you tackle?', o:['Below the shoulders (no head contact)','Below the sternum','Anywhere','Below the knees'], a:0, why:'The full game allows tackling below the shoulders, but never any head contact.'},
+    {id:'a24', d:3, q:'How long is a full national-game match?', o:['2 halves of 40 minutes','4 quarters of 5','2 halves of 20','3 periods of 10'], a:0, why:'The full game is two 40-minute halves — 80 minutes.'},
+    {id:'a25', d:3, q:'In the full game, can you kick in general play?', o:['Yes — punt, grubber, box and more','No, never','Only in the 22','Only penalties'], a:0, why:'The full kicking game switches on as you move up the grades — no kicking at U11, full kicking later.'},
+    {id:'a26', d:3, q:'As Levi moves up the grades, what happens to the laws?', o:['More of the national game switches on each year','They stay the same','They get simpler','Nothing changes'], a:0, why:'Each year up the grades turns on more of the full game until it is the real thing.'},
+    {id:'a27', d:3, q:'In the full game, how many penalty options does a team have?', o:['Tap, kick to touch, or kick at goal','Only a tap','Only a scrum','Only kick to touch'], a:0, why:'The full game gives three options — tap and go, kick to touch for a lineout, or kick at goal for 3.'},
+    {id:'a28', d:3, q:'A full-game lineout, compared with U11, has…', o:['More players, lifting, and a full contest','Fewer players','No contest','The same 5 players'], a:0, why:'The lineout grows from 5 at U11 to a full contested pod with lifting in the senior game.'},
   ]},
   b: { title:'The National Game — Full Laws', qs:[
-    {q:'How many points is a try?', o:['5','3','2','7'], a:0, why:'A try is worth 5 points — the main way to score.'},
-    {q:'How many points is a conversion?', o:['2','3','5','1'], a:0, why:'A successful conversion after a try adds 2 points.'},
-    {q:'How many points is a penalty kick at goal?', o:['3','2','5','1'], a:0, why:'A penalty kicked through the posts is worth 3 points.'},
-    {q:'Which way can you pass the ball?', o:['Sideways or backwards','Forwards','Any direction','Only backwards'], a:0, why:'You can never pass forward — the ball must go sideways or back.'},
-    {q:'What is it called if you knock the ball forward?', o:['A knock-on','A forward pass','A fumble','A turnover'], a:0, why:'Dropping or knocking the ball forward is a knock-on — a scrum to the other team.'},
-    {q:'What must a tackler do straight after a tackle?', o:['Release the player and roll away','Grab the ball','Stay on top','Stand up and run'], a:0, why:'The tackler must release and roll away so the game can continue fairly.'},
-    {q:'Who is allowed to talk to the referee?', o:['The captain','Anyone','The forwards','The coach'], a:0, why:'Only the captain speaks to the ref — respect for the referee is part of the game.'},
-    {q:'How many players per team on the field?', o:['15','13','12','11'], a:0, why:'Full rugby union is 15 a side.'},
-    {q:'How many players are in a full scrum?', o:['8','5','6','7'], a:0, why:'A full contested scrum has 8 forwards from each team.'},
-    {q:'Where must a lineout throw go?', o:['Straight down the middle','To your own side','To the back','Anywhere'], a:0, why:'The throw must go straight down the middle of the two lines.'},
-    {q:'What is formed when players bind over the ball on the ground?', o:['A ruck','A maul','A scrum','A lineout'], a:0, why:'A ruck forms on the ground after a tackle; a maul is the same idea but standing up.'},
-    {q:'Being in front of a teammate who last played the ball is…', o:['Offside','Onside','A knock-on','Fair play'], a:0, why:'You are offside if you are in front of the ball or the teammate who last played it.'},
+    /* Tier 1 — the basics */
+    {id:'b1', d:1, q:'How many points is a try?', o:['5','3','2','7'], a:0, why:'A try is worth 5 points — the main way to score.'},
+    {id:'b2', d:1, q:'How many points is a conversion?', o:['2','3','5','1'], a:0, why:'A successful conversion after a try adds 2 points.'},
+    {id:'b3', d:1, q:'How many points is a penalty kick at goal?', o:['3','2','5','1'], a:0, why:'A penalty kicked through the posts is worth 3 points.'},
+    {id:'b4', d:1, q:'How many points is a drop goal?', o:['3','5','2','1'], a:0, why:'A drop goal — drop-kicked over the bar in open play — is worth 3 points.'},
+    {id:'b5', d:1, q:'Which way can you pass the ball?', o:['Sideways or backwards','Forwards','Any direction','Only backwards'], a:0, why:'You can never pass forward — the ball must go sideways or back.'},
+    {id:'b6', d:1, q:'What is it called if you knock the ball forward?', o:['A knock-on','A forward pass','A fumble','A turnover'], a:0, why:'Dropping or knocking the ball forward is a knock-on.'},
+    {id:'b7', d:1, q:'How many players per team on the field?', o:['15','13','12','11'], a:0, why:'Full rugby union is 15 a side.'},
+    {id:'b8', d:1, q:'What is the object of the game?', o:['Score more points than the other team','Kick the most','Tackle the most','Run the furthest'], a:0, why:'You win by scoring more points than the opposition — everything else serves that.'},
+    /* Tier 2 — the phases of play */
+    {id:'b9', d:2, q:'What must a tackler do straight after a tackle?', o:['Release the player and roll away','Grab the ball','Stay on top','Stand up and run'], a:0, why:'The tackler must release and roll away so the game can continue fairly.'},
+    {id:'b10', d:2, q:'What forms when players bind over the ball on the ground?', o:['A ruck','A maul','A scrum','A lineout'], a:0, why:'A ruck forms on the ground after a tackle.'},
+    {id:'b11', d:2, q:'What is a maul?', o:['Like a ruck but players stay on their feet','A ruck on the ground','A type of scrum','A kick'], a:0, why:'A maul is the same contest as a ruck, but the ball-carrier is held up and still standing.'},
+    {id:'b12', d:2, q:'How many players are in a full scrum?', o:['8','5','6','7'], a:0, why:'A full contested scrum has 8 forwards from each team.'},
+    {id:'b13', d:2, q:'Where must a lineout throw go?', o:['Straight down the middle','To your own side','To the back','Anywhere'], a:0, why:'The throw must go straight down the middle of the two lines.'},
+    {id:'b14', d:2, q:'Who is allowed to talk to the referee?', o:['The captain','Anyone','The forwards','The coach'], a:0, why:'Only the captain speaks to the ref — respect for the referee is part of the game.'},
+    {id:'b15', d:2, q:'When are you offside in open play?', o:['In front of the ball or the teammate who last played it','Behind the ball','In your own half','Near the ref'], a:0, why:'You are offside if you are in front of the ball or the teammate who last played it.'},
+    {id:'b16', d:2, q:'What happens after a knock-on?', o:['A scrum to the other team','A penalty','A lineout','Play carries on'], a:0, why:'A knock-on gives a scrum to the other team.'},
+    {id:'b17', d:2, q:'In a ruck, can you pick the ball up with your hands?', o:['No — hands off the ball','Yes, anytime','Only the halfback in the ruck','Only if you are onside'], a:0, why:'No hands in the ruck — the ball must be won with the feet. The halfback plays it once it is out.'},
+    /* Tier 3 — discipline and reading the game */
+    {id:'b18', d:3, q:'A tackle that makes contact with the head is…', o:['Foul play — dangerous','Fine if accidental','Allowed in the 22','A knock-on'], a:0, why:'Head contact is dangerous play — refs follow a strict head-contact process. Safety first.'},
+    {id:'b19', d:3, q:'What does a yellow card mean?', o:['10 minutes in the sin bin','Sent off for good','A free kick','A warning only'], a:0, why:'A yellow card is 10 minutes off the field in the sin bin — the team plays a man down.'},
+    {id:'b20', d:3, q:'What does a red card mean?', o:['Sent off for the rest of the game','10 minutes off','A penalty','Nothing'], a:0, why:'A red card means you are off for the rest of the match.'},
+    {id:'b21', d:3, q:'What is the advantage law?', o:['Play continues after an infringement if the other team gains an advantage','A bonus point','A free kick','Extra time'], a:0, why:'The ref lets play go on after an infringement if the non-offending team is gaining ground — it keeps the game flowing.'},
+    {id:'b22', d:3, q:'Why do teams kick for territory?', o:['To gain ground and field position','To score 3 points','To waste time','To rest the forwards'], a:0, why:'Kicking for territory pushes the other team back and wins field position.'},
+    {id:'b23', d:3, q:'Can you kick at goal from a free kick?', o:['No — only from a penalty','Yes, for 3','Yes, for 2','Only in the 22'], a:0, why:'A free kick cannot be kicked at goal — only a penalty can. That is the key difference between them.'},
+    {id:'b24', d:3, q:'A conversion is kicked from…', o:['In line with where the try was scored','The middle of the field','The 22','Anywhere on halfway'], a:0, why:'The kicker lines up straight back from where the try was scored — so scoring near the posts makes the kick easier.'},
+    {id:'b25', d:3, q:'The offside line at a ruck is…', o:['The back foot of the last player in the ruck','The halfway line','The tryline','The 22'], a:0, why:'You must stay behind the back foot of the last player bound in the ruck, or you are offside.'},
+    {id:'b26', d:3, q:'A forward pass results in…', o:['A scrum to the other team','A penalty','A lineout','A free kick'], a:0, why:'A forward pass, like a knock-on, gives a scrum to the other team.'},
+    {id:'b27', d:3, q:'The referee’s word on the field is…', o:['Final','Only a suggestion','Open to argue','Decided by the captains'], a:0, why:'The ref’s decision is final — dissent gets penalised. Selectors notice players who respect it.'},
   ]},
 };
 
@@ -889,7 +932,7 @@ function freshState(){
     milestones:[{date:'2026-07-18', txt:"Started my Road to Black with Dad 🏉"}],
     achievements:[],
     focus:{name:'Tackling & Passing'},
-    habits:{}, quizBest:{}, quizzesDone:0,
+    habits:{}, quizBest:{}, quizzesDone:0, quizStats:{a:{},b:{}},
     pathwayStage:1,
     measurements:[{date:'2026-07-18', height:143, weight:39.5}],
     doneSessions:{},
@@ -1061,19 +1104,59 @@ function toggleHabit(id){
   save(); renderAll();
 }
 
-/* ── QUIZ ENGINE ── */
+/* ── QUIZ ENGINE (adaptive) ──
+   Tracks per-question history in S.quizStats[track][id] = {seen, correct, streak}.
+   - Unlocks harder tiers only once the easier ones are mastered (unlockedTier).
+   - Weights the draw so new + previously-missed questions come up often and mastered
+     ones rarely — so no two quizzes feel the same and he practises what he's weak on. */
 let Q=null;
 function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor((i+1)*pseudo(i)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 let _seed=1;
 function pseudo(i){ _seed=(_seed*9301+49297+i*233)%233280; return _seed/233280; }
+
+function qStats(track,id){ const t=S.quizStats[track]||(S.quizStats[track]={}); return t[id]||(t[id]={seen:0,correct:0,streak:0}); }
+function unlockedTier(track){
+  const bank=QUIZ[track].qs;
+  let tier=1;
+  for(let t=1;t<=2;t++){
+    const inTier=bank.filter(q=>q.d===t);
+    const mastered=inTier.filter(q=>qStats(track,q.id).streak>=1).length;
+    if(mastered>=Math.ceil(inTier.length*0.9)) tier=t+1; else break;
+  }
+  return tier;
+}
+function qWeight(track,q,tier){
+  const st=qStats(track,q.id);
+  let w;
+  if(st.seen===0) w=6;           // brand new — introduce it
+  else if(st.streak===0) w=5;    // got it wrong last time — bring it back soon
+  else if(st.streak===1) w=2;    // shaky — occasional review
+  else w=0.6;                    // mastered (2+ in a row) — rare refresh
+  if(q.d===tier) w*=1.4;         // give the newest unlocked tier some airtime
+  return w;
+}
+function weightedPick(items,n){
+  const pool=items.slice(), out=[];
+  while(out.length<n && pool.length){
+    const total=pool.reduce((s,x)=>s+x.w,0);
+    let r=pseudo(out.length)*total, idx=0;
+    for(;idx<pool.length;idx++){ r-=pool[idx].w; if(r<=0) break; }
+    if(idx>=pool.length) idx=pool.length-1;
+    out.push(pool[idx].q); pool.splice(idx,1);
+  }
+  return out;
+}
 function startQuiz(track){
   _seed=(Date.now?Date.now():1)%233280 + 1;
   const bank=QUIZ[track];
-  const qs=shuffle(bank.qs).slice(0,8).map(q=>{
+  const tier=unlockedTier(track);
+  const pool=bank.qs.filter(q=>q.d<=tier).map(q=>({q,w:qWeight(track,q,tier)}));
+  const chosen=weightedPick(pool,Math.min(8,pool.length));
+  const qs=shuffle(chosen).map(q=>{
     const order=shuffle(q.o.map((t,i)=>({t,correct:i===q.a})));
-    return {q:q.q, why:q.why, opts:order};
+    return {id:q.id, q:q.q, why:q.why, opts:order};
   });
-  Q={track, title:bank.title, qs, i:0, correct:0, answered:false};
+  Q={track, title:bank.title, tier, qs, i:0, correct:0, answered:false};
   document.getElementById('quiz-modal').classList.add('on');
   renderQuiz();
 }
@@ -1103,7 +1186,11 @@ function answerQuiz(idx){
     else if(i===idx) el.classList.add('wrong');
     else el.classList.add('dim');
   });
-  if(item.opts[idx].correct) Q.correct++;
+  const ok=item.opts[idx].correct;
+  if(ok) Q.correct++;
+  const st=qStats(Q.track,item.id);
+  st.seen++; if(ok){ st.correct++; st.streak++; } else { st.streak=0; }
+  saveLocal();
   const label = Q.i===Q.qs.length-1 ? 'See result' : 'Next question';
   document.getElementById('q-after').innerHTML=
     '<div class="q-why">'+(item.opts[idx].correct?'✅ ':'❌ ')+item.why+'</div>'
@@ -1230,10 +1317,18 @@ function renderFuel(){
 }
 
 function renderRules(){
+  const tierName=['','Learning the basics','Into the detail','The full game'];
   ['a','b'].forEach(tk=>{
     const el=document.getElementById('r-best-'+tk);
+    const bank=QUIZ[tk].qs;
+    const stats=S.quizStats[tk]||{};
+    const seen=bank.filter(q=>(stats[q.id]?.seen||0)>0).length;
     const best=S.quizBest[tk];
-    el.textContent = best!=null ? ('Best: '+best+'%'+(best===100?' 🎯':'')) : 'Not tried yet';
+    if(seen===0 && best==null){ el.textContent='Not tried yet'; return; }
+    const tier=unlockedTier(tk);
+    const mastered=bank.filter(q=>(stats[q.id]?.streak||0)>=2).length;
+    el.textContent='Level '+tier+' · '+tierName[tier]+' — '+mastered+'/'+bank.length+' mastered'
+      +(best!=null?' · best '+best+'%':'');
   });
 }
 
