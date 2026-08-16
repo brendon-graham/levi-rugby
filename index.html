@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.8.0">
+<meta name="app-version" content="0.9.0">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -319,6 +319,23 @@ body{
 .chart-legend{display:flex;gap:16px;font-size:11px;font-weight:700;color:var(--text2);margin-top:8px}
 .chart-legend .dotc{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .mini-note{font-size:11.5px;color:var(--text2);line-height:1.5;margin-top:2px}
+
+/* ── COMBINE ── */
+.cmb-latest{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.cmb-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.cmb-row:last-of-type{border-bottom:none}
+.cmb-em{font-size:22px;width:28px;text-align:center;flex:0 0 auto}
+.cmb-body{flex:1;min-width:0}
+.cmb-nm{font-size:14.5px;font-weight:700}
+.cmb-pbtag{font-size:9px;font-weight:800;color:var(--gold);border:1px solid var(--gold-dim);
+  padding:2px 6px;border-radius:10px;margin-left:6px;vertical-align:middle;text-transform:uppercase;letter-spacing:.6px}
+.cmb-hint{font-size:11.5px;color:var(--text2);margin-top:3px;line-height:1.45}
+.cmb-nums{flex:0 0 auto;text-align:right;min-width:64px}
+.cmb-val{font-size:22px;font-weight:900;line-height:1}
+.cmb-unit{font-size:11px;font-weight:700;color:var(--text2);margin-left:3px}
+.cmb-chip{display:inline-block;margin-top:6px;font-size:11px;font-weight:800;padding:3px 8px;border-radius:12px}
+.cmb-chip.up{color:#8ff0b6;background:var(--fern-dim)}
+.cmb-chip.down{color:#ffb3bd;background:#2a1618}
 </style>
 </head>
 <body>
@@ -408,6 +425,11 @@ body{
     </div>
     <div id="p-growth-chart"></div>
     <button class="btn ghost sm" onclick="openMeasure()" style="margin-top:12px">+ Add a measurement</button>
+  </div>
+
+  <div class="card">
+    <div class="sh">Off-season combine <span class="count" id="p-combinecount"></span></div>
+    <div id="p-combine"></div>
   </div>
 
   <div class="card">
@@ -573,6 +595,31 @@ body{
   </div>
 </div>
 
+<div class="overlay" id="combine-modal">
+  <div class="modal">
+    <h3>Record a combine</h3>
+    <div class="msub">Warm up first, do them fresh. Leave any test blank if you're not doing it today.</div>
+    <div class="field"><label>Date</label><input type="date" id="cmb-date"></div>
+    <div class="row2">
+      <div class="field"><label>10m sprint (s)</label><input type="number" step="0.01" id="cmb-sprint10" inputmode="decimal" placeholder="2.20"></div>
+      <div class="field"><label>20m sprint (s)</label><input type="number" step="0.01" id="cmb-sprint20" inputmode="decimal" placeholder="3.90"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Long jump (cm)</label><input type="number" step="1" id="cmb-longjump" inputmode="numeric" placeholder="150"></div>
+      <div class="field"><label>Press-ups (reps)</label><input type="number" step="1" id="cmb-pressups" inputmode="numeric" placeholder="15"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Pass left (/10)</label><input type="number" step="1" id="cmb-passL" inputmode="numeric" placeholder="6"></div>
+      <div class="field"><label>Pass right (/10)</label><input type="number" step="1" id="cmb-passR" inputmode="numeric" placeholder="8"></div>
+    </div>
+    <div class="field"><label>Beep test (level)</label><input type="number" step="0.1" id="cmb-beep" inputmode="decimal" placeholder="6.5"></div>
+    <div class="row2">
+      <button class="btn ghost" onclick="closeModal('combine-modal')">Cancel</button>
+      <button class="btn" onclick="saveCombine()">Save combine</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="quiz-modal">
   <div class="modal">
     <div id="quiz-body"></div>
@@ -643,6 +690,8 @@ const ACH = [
   {id:'hydration', em:'💧', nm:'Hydration Hero', test:s=>countHabitDays(s,'water')>=7},
   {id:'rested', em:'😴', nm:'Well Rested', test:s=>countHabitDays(s,'sleep')>=7},
   {id:'growing', em:'📏', nm:'Growing Strong', test:s=>(s.measurements||[]).length>=3},
+  {id:'combine1', em:'⏱️', nm:'First Combine', test:s=>(s.combines||[]).length>=1},
+  {id:'combine_pb', em:'📈', nm:'On the Up', test:s=>anyCombinePB(s)},
 ];
 
 const LEVEL_TITLES = ['Club Junior','Club Junior','Rising Player','Rising Player','Team Leader',
@@ -921,6 +970,48 @@ const FUEL = {
   ],
 };
 
+/* ══════════ OFF-SEASON COMBINE ══════════
+   A fixed, repeatable test battery. Run it every 4-6 weeks so progress is VISIBLE — that's
+   what keeps a young athlete motivated. Never framed as pass/fail — it's a personal-best
+   chase against yourself. `better:'low'` = faster/lower is better (sprints); 'high' = more
+   is better. Height/weight live in Growth, not here. Tests are age-appropriate and match
+   the work in the Train tab (acceleration, horizontal power, both-hands passing, engine). */
+const COMBINE = [
+  {id:'sprint10', em:'⚡', nm:'10m sprint', unit:'s', better:'low', dec:2, hint:'Standing start, time to 10m. Best of 2–3 with full rest. Trains your first-step burst.'},
+  {id:'sprint20', em:'🏃', nm:'20m sprint', unit:'s', better:'low', dec:2, hint:'Standing start, time to 20m. Best of 2–3 with full rest. Your top-end speed.'},
+  {id:'longjump', em:'🦘', nm:'Standing long jump', unit:'cm', better:'high', dec:0, hint:'Two-foot take-off and landing. Measure to your back heel. Best of 3. Power.'},
+  {id:'pressups', em:'💪', nm:'Press-ups', unit:'reps', better:'high', dec:0, hint:'Clean shape only — chest to a fist off the floor. Count good reps, stop when form drops.'},
+  {id:'passL', em:'👈', nm:'Passing — left hand', unit:'/10', better:'high', dec:0, hint:'10 passes at a target ~5–8m off the LEFT hand. Count the hits. Your edge as a 1st five.'},
+  {id:'passR', em:'👉', nm:'Passing — right hand', unit:'/10', better:'high', dec:0, hint:'10 passes at a target ~5–8m off the RIGHT hand. Count the hits.'},
+  {id:'beep', em:'🫁', nm:'Beep test', unit:'level', better:'high', dec:1, hint:'The shuttle run to the beeps. Record the level you reach. Your engine.'},
+];
+function combineHistory(id){
+  return (S.combines||[])
+    .filter(c=>c.results && c.results[id]!=null && !isNaN(c.results[id]))
+    .map(c=>({date:c.date, v:Number(c.results[id])}))
+    .sort((a,b)=>a.date<b.date?-1:1);
+}
+function combinePB(id){
+  const h=combineHistory(id); if(!h.length) return null;
+  const t=COMBINE.find(x=>x.id===id);
+  return t.better==='low'?Math.min(...h.map(x=>x.v)):Math.max(...h.map(x=>x.v));
+}
+function combineImproved(id){
+  // true if the newest value beat any earlier value for this test
+  const h=combineHistory(id); if(h.length<2) return false;
+  const t=COMBINE.find(x=>x.id===id);
+  const latest=h[h.length-1].v, prevBest=t.better==='low'?Math.min(...h.slice(0,-1).map(x=>x.v)):Math.max(...h.slice(0,-1).map(x=>x.v));
+  return t.better==='low'?latest<prevBest:latest>prevBest;
+}
+function anyCombinePB(s){
+  return COMBINE.some(t=>{
+    const h=(s.combines||[]).filter(c=>c.results&&c.results[t.id]!=null&&!isNaN(c.results[t.id])).map(c=>Number(c.results[t.id]));
+    if(h.length<2) return false;
+    const latest=h[h.length-1], prevBest=t.better==='low'?Math.min(...h.slice(0,-1)):Math.max(...h.slice(0,-1));
+    return t.better==='low'?latest<prevBest:latest>prevBest;
+  });
+}
+
 /* ══════════ STATE ══════════ */
 const KEY='levi_rugby_v1';
 let S = load();
@@ -935,6 +1026,7 @@ function freshState(){
     habits:{}, quizBest:{}, quizzesDone:0, quizStats:{a:{},b:{}},
     pathwayStage:1,
     measurements:[{date:'2026-07-18', height:143, weight:39.5}],
+    combines:[],
     doneSessions:{},
     updatedAt:0,
   };
@@ -1234,6 +1326,29 @@ function saveMeasure(){
   save(); renderProgress();
 }
 
+/* ── COMBINE ── */
+function openCombine(){
+  document.getElementById('cmb-date').value=todayISO();
+  COMBINE.forEach(t=>{ const el=document.getElementById('cmb-'+t.id); if(el) el.value=''; });
+  document.getElementById('combine-modal').classList.add('on');
+}
+function saveCombine(){
+  const results={};
+  COMBINE.forEach(t=>{
+    const v=parseFloat(document.getElementById('cmb-'+t.id).value);
+    if(!isNaN(v)) results[t.id]=v;
+  });
+  if(!Object.keys(results).length){ closeModal('combine-modal'); return; }
+  S.combines=S.combines||[];
+  S.combines.push({date:document.getElementById('cmb-date').value||todayISO(), results});
+  S.combines.sort((a,b)=>a.date<b.date?-1:1);
+  const gotPB=anyCombinePB(S);
+  closeModal('combine-modal');
+  addXP(25 + (gotPB?10:0), gotPB?'combine — new PB!':'combine done');
+  if(gotPB) setTimeout(()=>toast('📈  New personal best!'), 900);
+  save(); renderProgress();
+}
+
 /* ══════════ RENDER ══════════ */
 function renderAll(){ renderHome(); renderTrain(); renderFuel(); renderRules(); renderProgress(); renderPathway(); }
 
@@ -1291,6 +1406,48 @@ function renderGrowth(){
     +'<div class="chart">'+sparkline(wPts, getComputedStyle(document.documentElement).getPropertyValue('--gold').trim())+'</div>'
     +'<div class="chart-legend"><span><span class="dotc" style="background:var(--fern)"></span>Height cm</span>'
     +'<span><span class="dotc" style="background:var(--gold)"></span>Weight kg</span></div>';
+}
+
+function fmtVal(v,t){ return (t.dec?Number(v).toFixed(t.dec):Math.round(v)); }
+function renderCombine(){
+  const n=(S.combines||[]).length;
+  document.getElementById('p-combinecount').textContent = n?(n+(n===1?' done':' logged')):'';
+  const el=document.getElementById('p-combine');
+  if(!n){
+    el.innerHTML='<div class="mini-note" style="line-height:1.6">Your fitness &amp; skill tests. Run the same tests every 4–6 weeks and watch your numbers climb.<br>It\'s you vs your own best — never pass or fail. Do them fresh, with a good warm-up.</div>'
+      +'<button class="btn ghost sm" onclick="openCombine()" style="margin-top:14px">+ Record a combine</button>';
+    return;
+  }
+  const latest=S.combines[S.combines.length-1];
+  let rows='';
+  COMBINE.forEach(t=>{
+    const h=combineHistory(t.id);
+    if(!h.length){
+      rows+='<div class="cmb-row"><div class="cmb-em">'+t.em+'</div><div class="cmb-body">'
+        +'<div class="cmb-nm">'+t.nm+'</div><div class="cmb-hint">'+t.hint+'</div></div>'
+        +'<div class="cmb-nums"><div class="cmb-val">–</div></div></div>';
+      return;
+    }
+    const cur=h[h.length-1], pb=combinePB(t.id);
+    let chip='';
+    if(h.length>=2){
+      const prev=h[h.length-2].v, delta=cur.v-prev;
+      const improved = t.better==='low'?delta<0:delta>0;
+      const flat = Math.abs(delta)<1e-9;
+      if(!flat){
+        const sign=delta>0?'+':'−';
+        chip='<span class="cmb-chip '+(improved?'up':'down')+'">'+(improved?'▲ ':'▼ ')+sign+fmtVal(Math.abs(delta),t)+'</span>';
+      }
+    }
+    const isPB = cur.v===pb && h.length>=2;
+    rows+='<div class="cmb-row"><div class="cmb-em">'+t.em+'</div><div class="cmb-body">'
+      +'<div class="cmb-nm">'+t.nm+(isPB?' <span class="cmb-pbtag">PB</span>':'')+'</div>'
+      +'<div class="cmb-hint">PB '+fmtVal(pb,t)+' '+t.unit+' · '+h.length+' test'+(h.length>1?'s':'')+'</div></div>'
+      +'<div class="cmb-nums"><div class="cmb-val">'+fmtVal(cur.v,t)+'<span class="cmb-unit">'+t.unit+'</span></div>'+chip+'</div></div>';
+  });
+  el.innerHTML='<div class="cmb-latest">Latest · '+fmtDate(latest.date)+' · change shown vs your previous combine</div>'
+    +rows
+    +'<button class="btn ghost sm" onclick="openCombine()" style="margin-top:14px">+ Record a combine</button>';
 }
 
 function renderFuel(){
@@ -1467,6 +1624,7 @@ function renderProgress(){
   document.getElementById('p-skills').textContent=skillCount(S);
   document.getElementById('p-games').textContent=S.games.length;
   renderGrowth();
+  renderCombine();
 
   // achievements
   let ah='';
