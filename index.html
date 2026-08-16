@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.9.0">
+<meta name="app-version" content="0.10.0">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -336,6 +336,25 @@ body{
 .cmb-chip{display:inline-block;margin-top:6px;font-size:11px;font-weight:800;padding:3px 8px;border-radius:12px}
 .cmb-chip.up{color:#8ff0b6;background:var(--fern-dim)}
 .cmb-chip.down{color:#ffb3bd;background:#2a1618}
+
+/* ── MIND ── */
+.breath-wrap{display:flex;align-items:center;justify-content:center;height:210px;margin:4px 0}
+.breath-circle{width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle at 50% 38%, #1c3a2b, #141419);border:2px solid var(--fern);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  box-shadow:0 0 34px rgba(67,209,122,.35);will-change:transform;transform:scale(1)}
+.breath-circle span{font-size:13px;font-weight:800;color:var(--fern);padding:0 12px;line-height:1.3}
+.breath-count{text-align:center;font-size:12px;font-weight:700;color:var(--text2);margin:2px 0 12px;min-height:16px}
+.cue{padding:12px 0;border-bottom:1px solid var(--border)}
+.cue:last-child{border-bottom:none}
+.cue-h{font-size:11.5px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;
+  display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.cue-em{font-size:16px}
+.cue-words{display:flex;flex-wrap:wrap;gap:8px}
+.cue-w{font-size:14px;font-weight:800;color:var(--fern);background:var(--fern-dim);
+  border:1px solid var(--fern);padding:7px 13px;border-radius:20px}
+.imagery{font-size:14.5px;line-height:1.6;color:var(--text);background:var(--surface2);
+  border-left:3px solid var(--fern);border-radius:12px;padding:14px 16px;font-style:italic}
 </style>
 </head>
 <body>
@@ -486,6 +505,50 @@ body{
   </div>
 </div>
 
+<!-- ══ MIND ══ -->
+<div class="page" id="mind">
+  <div class="card fuel-hero">
+    <div class="ring" id="m-ring">0/3</div>
+    <div class="sub">Mind practice today · the top two inches</div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Breathing — settle your nerves</div>
+    <div class="breath-wrap">
+      <div class="breath-circle" id="breath-circle"><span id="breath-label">Ready when you are</span></div>
+    </div>
+    <div class="breath-count" id="breath-count"></div>
+    <button class="btn" id="breath-btn" onclick="toggleBreath()">Start breathing</button>
+    <div class="mini-note" style="margin-top:12px">In through your nose, out through your mouth — nice and slow. Use it before a game, before a kick, or any time you need to calm down.</div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Self-talk — your cue words</div>
+    <div class="mini-note" style="margin-bottom:12px">Short, positive words that point at what to <b>do</b>. Never "don't" — say "watch it in," not "don't drop it."</div>
+    <div id="m-cues"></div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Imagery — picture it first</div>
+    <div class="imagery" id="m-imagery"></div>
+    <div class="mini-note" style="margin-top:10px">Do it in a quiet minute after your warm-up, or in bed the night before a game. See it, feel it — then go and do it.</div>
+  </div>
+
+  <div class="sh" style="margin:4px 4px 10px">Train your mind today · +5 XP each</div>
+  <div id="m-practices"></div>
+
+  <div class="card">
+    <div class="sh">Pre-game routine <span class="count" id="m-routine-count">0 / 6</span></div>
+    <div class="mini-note" style="margin-bottom:12px">Tick these off before a game — get your head right, then go and enjoy it.</div>
+    <div id="m-routine"></div>
+  </div>
+
+  <div class="card">
+    <div class="sh">Your three game-day plans</div>
+    <div id="m-plans"></div>
+  </div>
+</div>
+
 <!-- ══ RULES ══ -->
 <div class="page" id="rules">
   <div class="card focus">
@@ -541,6 +604,8 @@ body{
     <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11"/><path d="M4 9l2-2 2 2M20 15l-2 2-2-2M9 4l2-2 2 2M15 20l-2 2-2-2"/></svg>Train</button>
   <button class="nb" data-tab="fuel" onclick="showTab('fuel')">
     <svg viewBox="0 0 24 24"><path d="M6 2h9l-1 9h2l-7 11 1-8H6z"/></svg>Fuel</button>
+  <button class="nb" data-tab="mind" onclick="showTab('mind')">
+    <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 00-6 6c0 1.8.9 3 1.5 4 .5.8.5 1.5.5 2.5V17a2 2 0 002 2h4a2 2 0 002-2v-1c0-1 0-1.7.5-2.5.6-1 1.5-2.2 1.5-4a6 6 0 00-6-6z"/><path d="M9.5 22h5"/></svg>Mind</button>
   <button class="nb" data-tab="rules" onclick="showTab('rules')">
     <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h8v16H6a2 2 0 00-2 2z"/><path d="M14 3h4a2 2 0 012 2v14a2 2 0 00-2-2h-4"/></svg>Rules</button>
   <button class="nb" data-tab="progress" onclick="showTab('progress')">
@@ -692,6 +757,9 @@ const ACH = [
   {id:'growing', em:'📏', nm:'Growing Strong', test:s=>(s.measurements||[]).length>=3},
   {id:'combine1', em:'⏱️', nm:'First Combine', test:s=>(s.combines||[]).length>=1},
   {id:'combine_pb', em:'📈', nm:'On the Up', test:s=>anyCombinePB(s)},
+  {id:'calm_head', em:'🧠', nm:'Calm Head', test:s=>Object.values(s.mindLog||{}).some(d=>d.breathing)},
+  {id:'game_face', em:'😤', nm:'Game Face', test:s=>Object.values(s.mindRoutine||{}).some(d=>MIND.routine.every(r=>d[r.id]))},
+  {id:'strong_mind', em:'🧘', nm:'Strong Mind', test:s=>Object.values(s.mindLog||{}).filter(d=>d.breathing||d.selftalk||d.imagery).length>=7},
 ];
 
 const LEVEL_TITLES = ['Club Junior','Club Junior','Rising Player','Rising Player','Team Leader',
@@ -970,6 +1038,41 @@ const FUEL = {
   ],
 };
 
+/* ══════════ MIND — the mental game ══════════
+   The "top two inches" — the highest-value pillar for a 1st five (the decision-maker).
+   Grounded in Coaching NZ Science in Coaching (basic mental skills + youth) and Hodge,
+   Sleivert & McKenzie, Smart Training for Peak Performance. Kept simple, positive, fun and
+   age-appropriate — offered, never drilled (mental skills only work if the athlete owns them).
+   Full detail: personal/levi-rugby/mental-skills.md. */
+const MIND = {
+  cues:[
+    {moment:'Starting a game', em:'🏉', words:['Hands ready','Talk early','My game']},
+    {moment:'Before a pass', em:'🤲', words:['Out in front','Point the fingers']},
+    {moment:'Before a kick', em:'🥾', words:['Head down','Strike clean']},
+    {moment:'Under pressure', em:'💪', words:['Next job','Dig in']},
+    {moment:'After a mistake', em:'🔄', words:['Reset','Next play']},
+  ],
+  routine:[
+    {id:'arrive', t:'Arrive calm & keen', c:'Boots on, gear ready, no rush.'},
+    {id:'warmup', t:'Warm up properly', c:'Get the body moving and the hands going.'},
+    {id:'breathe', t:'5 slow breaths', c:'In through the nose, out through the mouth. Settle.'},
+    {id:'cues', t:'Say your 3 cue words', c:'"Hands ready · Talk early · My game."'},
+    {id:'picture', t:'Picture one good play', c:'See a clean catch–pass or a big tackle.'},
+    {id:'ready', t:'Ready — go and enjoy it', c:'Fun first. Play your game.'},
+  ],
+  imagery:"Picture yourself running onto the ball at pace. Hands out early — you catch it clean. You see the gap, draw the defender, and put the perfect pass into your runner's hands. Or you take it to the line and make the tackle — cheek to cheek — and bounce straight back to your feet. A clear, strong picture. Now go and do it.",
+  plans:[
+    {n:'Pre-game plan', d:'How you get ready: arrive, warm up, breathe, cue words, picture one good play.'},
+    {n:'Performance plan', d:'What you focus on during: one job at a time. Talk. Next play.'},
+    {n:'Coping plan', d:'Your "what if": what if it rains, I miss a kick, we\'re behind? Decide the response before it happens — then nothing rattles you.'},
+  ],
+  practices:[
+    {id:'breathing', em:'🫧', nm:'Breathing / centring', hint:'Settle the nerves — before a game, a kick, or to calm down.'},
+    {id:'selftalk', em:'🗣️', nm:'Positive self-talk', hint:'Say your cue words. Point your focus at what to DO.'},
+    {id:'imagery', em:'🎬', nm:'Imagery — picture it', hint:'See the perfect play in your mind before you do it.'},
+  ],
+};
+
 /* ══════════ OFF-SEASON COMBINE ══════════
    A fixed, repeatable test battery. Run it every 4-6 weeks so progress is VISIBLE — that's
    what keeps a young athlete motivated. Never framed as pass/fail — it's a personal-best
@@ -1027,6 +1130,7 @@ function freshState(){
     pathwayStage:1,
     measurements:[{date:'2026-07-18', height:143, weight:39.5}],
     combines:[],
+    mindLog:{}, mindRoutine:{},
     doneSessions:{},
     updatedAt:0,
   };
@@ -1349,8 +1453,73 @@ function saveCombine(){
   save(); renderProgress();
 }
 
+/* ── MIND ── */
+function mindToday(){ S.mindLog=S.mindLog||{}; return S.mindLog[todayISO()]||(S.mindLog[todayISO()]={}); }
+function routineToday(){ S.mindRoutine=S.mindRoutine||{}; return S.mindRoutine[todayISO()]||(S.mindRoutine[todayISO()]={}); }
+function toggleMindPractice(id){
+  const day=mindToday();
+  const was=!!day[id];
+  day[id]=!was;
+  if(!was) addXP(5,'mind practice');
+  save(); renderMind(); renderHome(); renderProgress();
+}
+function markMindPractice(id){ // set true (used by the breathing tool on completion)
+  const day=mindToday();
+  if(!day[id]){ day[id]=true; addXP(5,'mind practice'); }
+  save(); renderMind(); renderHome(); renderProgress();
+}
+function toggleRoutine(id){
+  const day=routineToday();
+  day[id]=!day[id];
+  const allDone=MIND.routine.every(r=>day[r.id]);
+  if(allDone && !day._rewarded){ day._rewarded=true; addXP(15,'game ready!'); setTimeout(()=>toast('😤  Game face on — go well!'),700); }
+  save(); renderMind(); renderProgress();
+}
+
+/* Breathing / centring tool — In (4s) · Out (4s), 6 rounds. Pure CSS-transform animation. */
+let breath={running:false, count:0, timer:null};
+const BREATH_ROUNDS=6, BREATH_IN=4000, BREATH_OUT=4000;
+function breathPhase(txt, scale, ms){
+  const c=document.getElementById('breath-circle'), l=document.getElementById('breath-label');
+  if(!c) return;
+  c.style.transition='transform '+(ms/1000)+'s ease-in-out';
+  c.style.transform='scale('+scale+')';
+  if(l) l.textContent=txt;
+}
+function breathCycle(){
+  if(!breath.running) return;
+  if(breath.count>=BREATH_ROUNDS){ return completeBreath(); }
+  const cnt=document.getElementById('breath-count'); if(cnt) cnt.textContent='Breath '+(breath.count+1)+' of '+BREATH_ROUNDS;
+  breathPhase('Breathe in…', 1.6, BREATH_IN);
+  breath.timer=setTimeout(()=>{
+    if(!breath.running) return;
+    breathPhase('Breathe out…', 1.0, BREATH_OUT);
+    breath.timer=setTimeout(()=>{ breath.count++; breathCycle(); }, BREATH_OUT);
+  }, BREATH_IN);
+}
+function startBreath(){
+  if(breath.running) return;
+  breath.running=true; breath.count=0;
+  const b=document.getElementById('breath-btn'); if(b){ b.textContent='Stop'; b.classList.add('done'); }
+  breathCycle();
+}
+function stopBreath(){
+  breath.running=false; clearTimeout(breath.timer);
+  breathPhase('Ready when you are', 1.0, 600);
+  const cnt=document.getElementById('breath-count'); if(cnt) cnt.textContent='';
+  const b=document.getElementById('breath-btn'); if(b){ b.textContent='Start breathing'; b.classList.remove('done'); }
+}
+function toggleBreath(){ breath.running?stopBreath():startBreath(); }
+function completeBreath(){
+  breath.running=false;
+  breathPhase('Nice — calm and ready ✓', 1.0, 800);
+  const cnt=document.getElementById('breath-count'); if(cnt) cnt.textContent='Done';
+  const b=document.getElementById('breath-btn'); if(b){ b.textContent='Start breathing'; b.classList.remove('done'); }
+  markMindPractice('breathing');
+}
+
 /* ══════════ RENDER ══════════ */
-function renderAll(){ renderHome(); renderTrain(); renderFuel(); renderRules(); renderProgress(); renderPathway(); }
+function renderAll(){ renderHome(); renderTrain(); renderFuel(); renderMind(); renderRules(); renderProgress(); renderPathway(); }
 
 function renderPathway(){
   const cur=S.pathwayStage||1;
@@ -1448,6 +1617,46 @@ function renderCombine(){
   el.innerHTML='<div class="cmb-latest">Latest · '+fmtDate(latest.date)+' · change shown vs your previous combine</div>'
     +rows
     +'<button class="btn ghost sm" onclick="openCombine()" style="margin-top:14px">+ Record a combine</button>';
+}
+
+function renderMind(){
+  const day=S.mindLog[todayISO()]||{};
+  const done=MIND.practices.filter(p=>day[p.id]).length;
+  const ring=document.getElementById('m-ring'); if(ring) ring.textContent=done+'/'+MIND.practices.length;
+
+  // self-talk cue cards
+  document.getElementById('m-cues').innerHTML=MIND.cues.map(c=>
+    '<div class="cue"><div class="cue-h"><span class="cue-em">'+c.em+'</span>'+c.moment+'</div>'
+    +'<div class="cue-words">'+c.words.map(w=>'<span class="cue-w">'+w+'</span>').join('')+'</div></div>'
+  ).join('');
+
+  // daily practice ticks
+  document.getElementById('m-practices').innerHTML=MIND.practices.map(p=>{
+    const on=!!day[p.id];
+    return '<div class="habit'+(on?' on':'')+'" onclick="toggleMindPractice(\''+p.id+'\')">'
+      +'<div class="hem">'+p.em+'</div>'
+      +'<div class="hn">'+p.nm+'<div class="cmb-hint">'+p.hint+'</div></div>'
+      +'<div class="check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div></div>';
+  }).join('');
+
+  // pre-game routine
+  const rt=S.mindRoutine[todayISO()]||{};
+  const rdone=MIND.routine.filter(r=>rt[r.id]).length;
+  document.getElementById('m-routine-count').textContent=rdone+' / '+MIND.routine.length;
+  document.getElementById('m-routine').innerHTML=MIND.routine.map(r=>{
+    const on=!!rt[r.id];
+    return '<div class="habit'+(on?' on':'')+'" onclick="toggleRoutine(\''+r.id+'\')">'
+      +'<div class="check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>'
+      +'<div class="hn">'+r.t+'<div class="cmb-hint">'+r.c+'</div></div></div>';
+  }).join('');
+
+  // imagery script
+  document.getElementById('m-imagery').textContent=MIND.imagery;
+
+  // plans
+  document.getElementById('m-plans').innerHTML=MIND.plans.map(p=>
+    '<div class="meal"><div class="meal-m">'+p.n+'</div><div class="meal-f">'+p.d+'</div></div>'
+  ).join('');
 }
 
 function renderFuel(){
