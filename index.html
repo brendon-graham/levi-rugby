@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="app-version" content="0.10.0">
+<meta name="app-version" content="0.11.0">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -560,8 +560,8 @@ body{
   <div class="track a" onclick="startQuiz('a')">
     <div class="tk-em">🏉</div>
     <div class="tk-body">
-      <div class="tk-t">Grade Rules</div>
-      <div class="tk-s">Small Blacks U11 — what the whistle goes for on Saturday</div>
+      <div class="tk-t">Playing Your Grade</div>
+      <div class="tk-s">Smart decisions in your games — what to do and when</div>
       <div class="tk-best" id="r-best-a">Not tried yet</div>
     </div>
     <div class="tk-go">›</div>
@@ -570,8 +570,8 @@ body{
   <div class="track b" onclick="startQuiz('b')">
     <div class="tk-em">🖤</div>
     <div class="tk-body">
-      <div class="tk-t">The National Game</div>
-      <div class="tk-s">Full 15-a-side laws — the real game the All Blacks play</div>
+      <div class="tk-t">Reading the Game</div>
+      <div class="tk-s">Game-decision laws + real match situations to solve</div>
       <div class="tk-best" id="r-best-b">Not tried yet</div>
     </div>
     <div class="tk-go">›</div>
@@ -781,70 +781,49 @@ const HABITS = [
    basics, and prioritises new + previously-missed questions. Correct answer is always o[0]
    in the data (a:0); the engine shuffles option order on screen. Grounded in personal/levi-rugby/rules.md. */
 const QUIZ = {
-  a: { title:'Grade Rules — Small Blacks U11', qs:[
-    /* Tier 1 — the U11 basics */
-    {id:'a1', d:1, q:'In U11, where must a tackle make contact?', o:['Below the sternum (the tummy)','Around the shoulders','Anywhere on the body','Below the knees'], a:0, why:'U11 tackles must target and first contact below the sternum — safety first.'},
-    {id:'a2', d:1, q:'Can you tackle a player whose feet are off the ground?', o:['No, never','Yes, if they have the ball','Only in the 22','Yes'], a:0, why:'You must never tackle a player in the air — it is dangerous play.'},
-    {id:'a3', d:1, q:'How many players are in a U11 scrum?', o:['5','8','3','6'], a:0, why:'U11 scrums have 5 players, with no pushing and no contest.'},
-    {id:'a4', d:1, q:'Is there pushing in a U11 scrum?', o:['No pushing','Yes, up to 1.5m','Only the front row','Yes'], a:0, why:'At U11 the scrum is uncontested — no push. It restarts play, nothing more.'},
-    {id:'a5', d:1, q:'How many players are in a U11 lineout?', o:['5','7','2','8'], a:0, why:'Five players in the U11 lineout.'},
-    {id:'a6', d:1, q:'Can you kick the ball in general play at U11?', o:['No kicking in general play','Yes, anytime','Only grubbers','Only in your 22'], a:0, why:'No kicking in general play at U11 — it keeps the ball in hand and builds skills.'},
-    {id:'a7', d:1, q:'What happens with a penalty at U11?', o:['It is tapped on the ground','Kicked at goal for 3','Kicked to touch','A free scrum'], a:0, why:'All U11 penalties are tapped on the ground — no kicks at goal or to touch.'},
-    {id:'a8', d:1, q:'How big can a U11 field be?', o:['No more than 70m × 40m','100m × 70m','50m × 30m','Any size'], a:0, why:'U11 uses a smaller field — up to 70m long and 40m wide.'},
-    {id:'a9', d:1, q:'How long is a U11 game?', o:['4 quarters of 5 minutes','2 halves of 40 minutes','2 halves of 20 minutes','3 periods of 10'], a:0, why:'Four 5-minute quarters — 20 minutes of play.'},
-    {id:'a10', d:1, q:'How does play restart after a team scores?', o:['A punt or drop kick from halfway','A scrum','A lineout','A tap on the tryline'], a:0, why:'The other team restarts with a punt or drop kick from halfway, opponents back 5m.'},
-    /* Tier 2 — U11 detail */
-    {id:'a11', d:2, q:'When do lineouts start being contested?', o:['At U11','At U8','Never in juniors','Only at 15-a-side'], a:0, why:'Lineouts start being contested at U11 — before that they are not.'},
-    {id:'a12', d:2, q:'At a restart after a score, how far back must the other team be?', o:['5 metres','10 metres','The 22','Halfway'], a:0, why:'The receiving team must be at least 5m back at the U11 restart.'},
-    {id:'a13', d:2, q:'How much total playing time is a U11 game?', o:['20 minutes','40 minutes','80 minutes','60 minutes'], a:0, why:'Four quarters of 5 minutes = 20 minutes of play.'},
-    {id:'a14', d:2, q:'Is the U11 scrum contested for the ball?', o:['No contest','Yes, fully','Only the hooker','Yes, with pushing'], a:0, why:'The U11 scrum is uncontested — it just restarts play.'},
-    {id:'a15', d:2, q:'Who is allowed to talk to the referee?', o:['The captain','Anyone','The forwards','The coach'], a:0, why:'Only the captain speaks to the ref — respect for the referee is part of the game, at every grade.'},
-    {id:'a16', d:2, q:'A heavier "dispensated" player at U11 cannot…', o:['Run No.8 off the scrum or be a battering ram','Pass the ball','Score a try','Play in the backs'], a:0, why:'Heavier graded players are restricted for safety — no charging off the scrum or being used as a battering ram.'},
-    {id:'a17', d:2, q:'What is the widest a U11 field can be?', o:['40 metres','70 metres','100 metres','50 metres'], a:0, why:'U11 fields are up to 70m long and 40m wide.'},
-    {id:'a18', d:2, q:'Why must U11 tackles be below the sternum?', o:['Safety — it protects young heads and necks','To make it harder','It looks better','To slow the game down'], a:0, why:'The low tackle height in juniors is all about safety for growing players.'},
-    {id:'a19', d:2, q:'What restarts the game after the other team scores?', o:['Your team kicks from halfway','A scrum on halfway','A lineout','A penalty'], a:0, why:'The team that was scored against restarts with a punt or drop kick from halfway.'},
-    {id:'a20', d:2, q:'Can you kick a U11 penalty at goal for points?', o:['No — it is tapped only','Yes, for 3','Yes, for 2','Only in the 22'], a:0, why:'No kicks at goal in U11 — every penalty is tapped on the ground.'},
-    /* Tier 3 — connecting to the national game he is building toward */
-    {id:'a21', d:3, q:'In the full 15-a-side game, how many players are in a scrum?', o:['8','5','6','3'], a:0, why:'The full contested scrum has 8 forwards a side — you build toward it from the U11 5-player scrum.'},
-    {id:'a22', d:3, q:'How big can a full national-game field be?', o:['Up to 100m × 70m','70m × 40m','120m × 80m','Any size'], a:0, why:'The full field is much bigger — up to 100m long and 70m wide.'},
-    {id:'a23', d:3, q:'In the full game, how high can you tackle?', o:['Below the shoulders (no head contact)','Below the sternum','Anywhere','Below the knees'], a:0, why:'The full game allows tackling below the shoulders, but never any head contact.'},
-    {id:'a24', d:3, q:'How long is a full national-game match?', o:['2 halves of 40 minutes','4 quarters of 5','2 halves of 20','3 periods of 10'], a:0, why:'The full game is two 40-minute halves — 80 minutes.'},
-    {id:'a25', d:3, q:'In the full game, can you kick in general play?', o:['Yes — punt, grubber, box and more','No, never','Only in the 22','Only penalties'], a:0, why:'The full kicking game switches on as you move up the grades — no kicking at U11, full kicking later.'},
-    {id:'a26', d:3, q:'As Levi moves up the grades, what happens to the laws?', o:['More of the national game switches on each year','They stay the same','They get simpler','Nothing changes'], a:0, why:'Each year up the grades turns on more of the full game until it is the real thing.'},
-    {id:'a27', d:3, q:'In the full game, how many penalty options does a team have?', o:['Tap, kick to touch, or kick at goal','Only a tap','Only a scrum','Only kick to touch'], a:0, why:'The full game gives three options — tap and go, kick to touch for a lineout, or kick at goal for 3.'},
-    {id:'a28', d:3, q:'A full-game lineout, compared with U11, has…', o:['More players, lifting, and a full contest','Fewer players','No contest','The same 5 players'], a:0, why:'The lineout grows from 5 at U11 to a full contested pod with lifting in the senior game.'},
+  a: { title:'Playing Your Grade — Smart Decisions', qs:[
+    /* Tier 1 — the core decisions at his grade */
+    {id:'a1', d:1, q:'You have just been tackled to the ground. Best thing to do with the ball?', o:['Place it back toward your team straight away','Hold on and try to get up','Throw it anywhere','Kick it away'], a:0, why:'Present the ball back fast so your team gets quick, clean ball to attack.'},
+    {id:'a2', d:1, q:'A team-mate has the ball and you are running to help. Where should you be?', o:['Behind the ball, calling for it','In front of them','Standing still','Off the field'], a:0, why:'Support behind the ball. Get in front of the ball-carrier and it is a forward pass or offside.'},
+    {id:'a3', d:1, q:'You are about to be tackled but a team-mate outside you is free. Best option?', o:['Pass before contact so they run onto it','Run into the tackler anyway','Fall to the ground','Kick it high'], a:0, why:'Pass before you are tackled so your mate gets it at pace in space.'},
+    {id:'a4', d:1, q:'In your grade, where must your tackle first make contact?', o:['Below the sternum (the tummy)','Around the shoulders','On the head','Anywhere you like'], a:0, why:'Low tackle height keeps young players safe. Aim for the tummy, head to the side.'},
+    {id:'a5', d:1, q:'You win a penalty. The smart, quick way to restart at your grade?', o:['Tap it on your foot and go before they are set','Stand and argue','Wait for everyone to get ready','Sit down'], a:0, why:'A fast tap catches the defence not set. Heads-up rugby wins easy metres.'},
+    {id:'a6', d:1, q:'The ref calls "advantage" to your team after the other side makes a mistake. What do you do?', o:['Play on and attack — it is a free go','Stop and wait','Kick it out','Ask for a scrum straight away'], a:0, why:'Advantage means keep playing. If it does not work the ref brings it back, so you risk nothing.'},
+    /* Tier 2 — reading the play */
+    {id:'a7', d:2, q:'You catch the ball with lots of space ahead and no defender near. Best choice?', o:['Run straight and hard into the space','Pass sideways straight away','Stop and look around','Kick it away'], a:0, why:'Space ahead means go. Straighten up and attack the gap.'},
+    {id:'a8', d:2, q:'A defender runs straight at you and a team-mate is free outside. What do you do?', o:['Run at the defender to fix them, then pass late','Pass before the defender commits','Run straight into the defender','Kick it'], a:0, why:'Draw the defender in by running at them, then pass late so your mate has clear space.'},
+    {id:'a9', d:2, q:'Right after you make a tackle, what is your first job?', o:['Get straight back to your feet','Stay down and rest','Lie over the ball','Walk away'], a:0, why:'Up fast. The game does not stop, and first to your feet can win the ball back.'},
+    {id:'a10', d:2, q:'You knock the ball forward out of your hands. What happens?', o:['Scrum to the other team','Play carries on','Penalty to you','Nothing'], a:0, why:'A knock-on hands the ball over. Watch it into your fingers and carry in two hands.'},
+    {id:'a11', d:2, q:'Why pass to the space in front of your runner, not straight at them?', o:['So they catch it running at full speed','So it is harder to catch','To slow them down','No real reason'], a:0, why:'A pass in front lets your runner take it at pace and hit the gap.'},
+    {id:'a12', d:2, q:'Your team is defending. Where must you be to stay onside?', o:['Behind the ball','In front of the ball','Right next to their runner','Anywhere'], a:0, why:'Get in front of the ball on defence and you are offside. Stay behind it and come forward together.'},
+    /* Tier 3 — first-five thinking */
+    {id:'a13', d:3, q:'You are first-five and the defence is rushing up fast and flat. Smart option?', o:['Move the ball early or take it to the line and pass late','Run straight into the rush','Kick it blindly','Stand still and wait'], a:0, why:'Against a fast rush, shift the ball early or commit them late. Do not get caught flat.'},
+    {id:'a14', d:3, q:'A team-mate makes a big break upfield. What should you do?', o:['Chase hard in support, ready for the pass','Stop and watch','Jog up slowly','Run in front of them'], a:0, why:'Support the break. Be there for the offload before their cover arrives.'},
+    {id:'a15', d:3, q:'Last play of the game, you are a few points down near their line. Best choice?', o:['Keep the ball alive and go for the try','Kick it out to end the game','Run backwards','Give up'], a:0, why:'A try wins it. Hold the ball, back your skills, and finish.'},
+    {id:'a16', d:3, q:'Why does knowing the laws help you most as a first-five?', o:['You read the game faster and make better calls','It does not help players','Only refs need them','So you can argue more'], a:0, why:'The 10 makes the decisions. Knowing the laws means you spot the best option before anyone else.'},
   ]},
-  b: { title:'The National Game — Full Laws', qs:[
-    /* Tier 1 — the basics */
-    {id:'b1', d:1, q:'How many points is a try?', o:['5','3','2','7'], a:0, why:'A try is worth 5 points — the main way to score.'},
-    {id:'b2', d:1, q:'How many points is a conversion?', o:['2','3','5','1'], a:0, why:'A successful conversion after a try adds 2 points.'},
-    {id:'b3', d:1, q:'How many points is a penalty kick at goal?', o:['3','2','5','1'], a:0, why:'A penalty kicked through the posts is worth 3 points.'},
-    {id:'b4', d:1, q:'How many points is a drop goal?', o:['3','5','2','1'], a:0, why:'A drop goal — drop-kicked over the bar in open play — is worth 3 points.'},
-    {id:'b5', d:1, q:'Which way can you pass the ball?', o:['Sideways or backwards','Forwards','Any direction','Only backwards'], a:0, why:'You can never pass forward — the ball must go sideways or back.'},
-    {id:'b6', d:1, q:'What is it called if you knock the ball forward?', o:['A knock-on','A forward pass','A fumble','A turnover'], a:0, why:'Dropping or knocking the ball forward is a knock-on.'},
-    {id:'b7', d:1, q:'How many players per team on the field?', o:['15','13','12','11'], a:0, why:'Full rugby union is 15 a side.'},
-    {id:'b8', d:1, q:'What is the object of the game?', o:['Score more points than the other team','Kick the most','Tackle the most','Run the furthest'], a:0, why:'You win by scoring more points than the opposition — everything else serves that.'},
-    /* Tier 2 — the phases of play */
-    {id:'b9', d:2, q:'What must a tackler do straight after a tackle?', o:['Release the player and roll away','Grab the ball','Stay on top','Stand up and run'], a:0, why:'The tackler must release and roll away so the game can continue fairly.'},
-    {id:'b10', d:2, q:'What forms when players bind over the ball on the ground?', o:['A ruck','A maul','A scrum','A lineout'], a:0, why:'A ruck forms on the ground after a tackle.'},
-    {id:'b11', d:2, q:'What is a maul?', o:['Like a ruck but players stay on their feet','A ruck on the ground','A type of scrum','A kick'], a:0, why:'A maul is the same contest as a ruck, but the ball-carrier is held up and still standing.'},
-    {id:'b12', d:2, q:'How many players are in a full scrum?', o:['8','5','6','7'], a:0, why:'A full contested scrum has 8 forwards from each team.'},
-    {id:'b13', d:2, q:'Where must a lineout throw go?', o:['Straight down the middle','To your own side','To the back','Anywhere'], a:0, why:'The throw must go straight down the middle of the two lines.'},
-    {id:'b14', d:2, q:'Who is allowed to talk to the referee?', o:['The captain','Anyone','The forwards','The coach'], a:0, why:'Only the captain speaks to the ref — respect for the referee is part of the game.'},
-    {id:'b15', d:2, q:'When are you offside in open play?', o:['In front of the ball or the teammate who last played it','Behind the ball','In your own half','Near the ref'], a:0, why:'You are offside if you are in front of the ball or the teammate who last played it.'},
-    {id:'b16', d:2, q:'What happens after a knock-on?', o:['A scrum to the other team','A penalty','A lineout','Play carries on'], a:0, why:'A knock-on gives a scrum to the other team.'},
-    {id:'b17', d:2, q:'In a ruck, can you pick the ball up with your hands?', o:['No — hands off the ball','Yes, anytime','Only the halfback in the ruck','Only if you are onside'], a:0, why:'No hands in the ruck — the ball must be won with the feet. The halfback plays it once it is out.'},
-    /* Tier 3 — discipline and reading the game */
-    {id:'b18', d:3, q:'A tackle that makes contact with the head is…', o:['Foul play — dangerous','Fine if accidental','Allowed in the 22','A knock-on'], a:0, why:'Head contact is dangerous play — refs follow a strict head-contact process. Safety first.'},
-    {id:'b19', d:3, q:'What does a yellow card mean?', o:['10 minutes in the sin bin','Sent off for good','A free kick','A warning only'], a:0, why:'A yellow card is 10 minutes off the field in the sin bin — the team plays a man down.'},
-    {id:'b20', d:3, q:'What does a red card mean?', o:['Sent off for the rest of the game','10 minutes off','A penalty','Nothing'], a:0, why:'A red card means you are off for the rest of the match.'},
-    {id:'b21', d:3, q:'What is the advantage law?', o:['Play continues after an infringement if the other team gains an advantage','A bonus point','A free kick','Extra time'], a:0, why:'The ref lets play go on after an infringement if the non-offending team is gaining ground — it keeps the game flowing.'},
-    {id:'b22', d:3, q:'Why do teams kick for territory?', o:['To gain ground and field position','To score 3 points','To waste time','To rest the forwards'], a:0, why:'Kicking for territory pushes the other team back and wins field position.'},
-    {id:'b23', d:3, q:'Can you kick at goal from a free kick?', o:['No — only from a penalty','Yes, for 3','Yes, for 2','Only in the 22'], a:0, why:'A free kick cannot be kicked at goal — only a penalty can. That is the key difference between them.'},
-    {id:'b24', d:3, q:'A conversion is kicked from…', o:['In line with where the try was scored','The middle of the field','The 22','Anywhere on halfway'], a:0, why:'The kicker lines up straight back from where the try was scored — so scoring near the posts makes the kick easier.'},
-    {id:'b25', d:3, q:'The offside line at a ruck is…', o:['The back foot of the last player in the ruck','The halfway line','The tryline','The 22'], a:0, why:'You must stay behind the back foot of the last player bound in the ruck, or you are offside.'},
-    {id:'b26', d:3, q:'A forward pass results in…', o:['A scrum to the other team','A penalty','A lineout','A free kick'], a:0, why:'A forward pass, like a knock-on, gives a scrum to the other team.'},
-    {id:'b27', d:3, q:'The referee’s word on the field is…', o:['Final','Only a suggestion','Open to argue','Decided by the captains'], a:0, why:'The ref’s decision is final — dissent gets penalised. Selectors notice players who respect it.'},
+  b: { title:'Reading the Game — Full Laws', qs:[
+    /* Tier 1 — the decision laws every player needs */
+    {id:'b1', d:1, q:'In open play, when are you offside?', o:['When you are in front of the team-mate who last played the ball','When you are behind the ball','When you are in your own half','When you are tired'], a:0, why:'Stay behind the ball and the last team-mate to play it, or you are offside.'},
+    {id:'b2', d:1, q:'What does the advantage law let the ref do?', o:['Let play continue after a mistake if your team is gaining ground','Give a bonus point','Add extra time','Stop play every time'], a:0, why:'Advantage keeps the game flowing. You get to play on if it helps you.'},
+    {id:'b3', d:1, q:'Straight after making a tackle, the tackler must?', o:['Let go of the player and roll away from the ball','Grab the ball on the ground','Lie on top of them','Hold them down'], a:0, why:'Release and roll away, then you can compete for the ball legally. Not doing it is a penalty.'},
+    {id:'b4', d:1, q:'At a ruck, can you use your hands to pick up the ball?', o:['No — feet only until the ball is out','Yes, anytime','Only the biggest player','Yes if you are onside'], a:0, why:'No hands in the ruck. The halfback plays it once it is clear at the back.'},
+    {id:'b5', d:1, q:'A forward pass or a knock-on gives the other team?', o:['A scrum','A penalty','A lineout','Nothing'], a:0, why:'Both hand the ball over at a scrum. Keep passes going back and hands soft.'},
+    {id:'b6', d:1, q:'You kick the ball straight out on the full from OUTSIDE your 22. What happens?', o:['Lineout back where you kicked — you lose the ground','Lineout where it went out','Play carries on','A scrum to you'], a:0, why:'Only inside your own 22 can you kick out on the full and keep the ground gained.'},
+    /* Tier 2 — the laws that shape your choices */
+    {id:'b7', d:2, q:'The offside line at a ruck is?', o:['The back foot of the last player in the ruck','The halfway line','The ball itself','The tryline'], a:0, why:'Stay behind the back foot of the last player in the ruck, or you are offside and penalised.'},
+    {id:'b8', d:2, q:'Your team is awarded a penalty. What are your three options?', o:['Tap and go, kick to touch for a lineout, or kick at goal','Only a tap','Only a scrum','Only kick it out'], a:0, why:'Read the situation: points, territory, or a quick tap. As a 10 you often make this call.'},
+    {id:'b9', d:2, q:'How is a free kick different from a penalty?', o:['You cannot kick a free kick at goal','It is worth more points','There is no difference','You get 10 metres'], a:0, why:'A penalty lets you shoot for goal; a free kick does not. That changes your choice.'},
+    {id:'b10', d:2, q:'A tackle or shoulder that makes contact with the head is?', o:['Foul play — dangerous and penalised','Fine if it is an accident','Allowed inside the 22','Just a knock-on'], a:0, why:'No head contact, ever. Tackle low and safe — refs follow a strict head-contact process.'},
+    {id:'b11', d:2, q:'A conversion is taken from?', o:['In line with where the try was scored','The middle of the field','The 22','Anywhere on halfway'], a:0, why:'Score close to the posts and the conversion is far easier — worth thinking about as you dive in.'},
+    {id:'b12', d:2, q:'Why do teams kick for territory?', o:['To push the other team back and win field position','To waste time','To score three points','To rest the forwards'], a:0, why:'Field position matters. A good kick turns your defence into attack in their half.'},
+    /* Tier 3 — what would you do */
+    {id:'b13', d:3, q:'Penalty right in front and in range, your team down by 2, three minutes left. Best option?', o:['Kick at goal to take the lead','Kick to the corner','Tap and run it','Kick it out to end the game'], a:0, why:'In range and behind by 2 — take the 3 points and the lead. Simple and smart.'},
+    {id:'b14', d:3, q:'You are deep in your own 22 under heavy pressure with messy ball. Safest first-five option?', o:['Kick long to touch to clear your lines','Run it out from your own line','Throw a long risky pass','Take it into contact'], a:0, why:'Clear the danger. Kick for touch and get your team up the field.'},
+    {id:'b15', d:3, q:'You win a quick penalty and the defence is not set yet. Best option?', o:['Tap and go fast to catch them out','Wait for your forwards','Slowly kick to touch','Argue the call'], a:0, why:'A fast tap against an unset defence is easy metres. Heads-up rugby.'},
+    {id:'b16', d:3, q:'Last play of the game, down by 4, five metres from their line. Best choice?', o:['Go for the try — three points will not win it','Drop a goal for 3','Kick to touch','Take a shot at goal'], a:0, why:'You need 5 to win, so a penalty or drop goal is not enough. Back the try.'},
+    {id:'b17', d:3, q:'The ref is playing advantage and your attacking move breaks down. What happens?', o:['Play comes back to the original penalty or scrum','You lose the ball','Play just stops','The other team gets a penalty'], a:0, why:'Advantage means you risk nothing — that is exactly why you always play on.'},
+    {id:'b18', d:3, q:'The other team has a player in the sin bin (yellow card). How should you play?', o:['Attack hard while you have the extra man','Slow the game down','Kick it all away','Play exactly the same'], a:0, why:'A man up is your big chance. Use the extra space and go after them.'},
   ]},
 };
 
@@ -877,132 +856,131 @@ const PROGRAM = {
     am:{ title:'Speed & Power', tag:'Morning · with Dad', time:'22 min',
       intro:'Get explosive. Fresh, fast reps only. Stop before the quality drops.',
       blocks:[
-        {name:'Warm-up', time:'4 min', items:[{d:'Wake the legs up', c:'Jog, leg swings, lunges, fire hydrants, high knees, 2 build-up runs.'}]},
+        {name:'Warm-up', time:'4 min', items:[{d:'RAMP warm-up', t:'4 min', c:'2 min easy jog, then leg swings x10 each leg, walking lunges x6 each, high knees 2x15m, and 2 build-up runs (70% then 85%). Break a light sweat before any fast work.'}]},
         {name:'Acceleration shape', time:'5 min', items:[
-          {d:'Wall drill', t:'2 x 5 each leg', c:'Forward lean, straight line from ankle to shoulder, push the ground back.'},
-          {d:'Scissor drill', t:'2 x 6', c:'Arms and legs snap together. Fast arms, knees punching forward.'}]},
+          {d:'Wall drive hold', t:'2 x 5 each leg', c:'Lean hands on a wall, body one straight line from ankle through hip to shoulder. Drive one knee up (toe up), then punch the foot down and back. Hold 2 sec each rep and feel the push.'},
+          {d:'Wall drive switches', t:'2 x 6 (3 each leg)', c:'Same lean, now snap the legs — one knee up, one down — fast and sharp. Quiet feet, hips tall, no bum sticking out.'}]},
         {name:'Horizontal power', time:'6 min', items:[
-          {d:'Broad jump + stick', t:'4', c:'Jump forward, land soft, freeze for 2 seconds.'},
-          {d:'Power skips for distance', t:'2 x 15 m', c:'Push back hard and travel forward, not just up.'},
-          {d:'Single-leg hop + stick', t:'4 each', c:'Quiet landing, knee tracking over the toes.'}]},
+          {d:'Broad jump + stick', t:'4', c:'Swing the arms back then punch forward, jump for distance, and land soft in a quarter-squat — freeze 2 sec. If you wobble it was too far; control it first.'},
+          {d:'Power skip for distance', t:'2 x 15 m', c:'Big, tall skips — drive the knee up and push the ground back so you travel FORWARD, not just up. Land mid-foot.'},
+          {d:'Single-leg hop + stick', t:'3 each leg', c:'Hop forward on one leg, land soft with the knee tracking over the toes (not caving in), and freeze 2 sec. Quality over distance.'}]},
         {name:'Speed', time:'5 min', items:[
-          {d:'Accelerations', t:'4-6 x 10-20 m', c:'100% effort, then walk back until breathing is normal. Stop while still fast.'},
-          {d:'Load & lift start', t:'4 each leg', c:'Load the front leg, punch out low, then rise smoothly.'},
-          {d:'Band-resisted starts', t:'optional', c:'Dad holds a band round your waist - drive out hard for 5 m.'}]},
-        {name:'Finish', time:'2 min', items:[{d:'2 easy strides', c:'Relaxed and fast. Done.'}]},
+          {d:'Falling-start sprints', t:'4-6 x 15 m', c:'Stand tall, lean from the ankles until you have to go, then GO. First 3 steps low and driving with arms punching cheek-to-cheek, then rise tall and relaxed. Walk back slowly to fully recover between each.'},
+          {d:'Band-resisted starts (optional)', t:'4 x 5 m', c:'Dad holds a band at your waist — drive out against it with big low steps. Then take the band off and do one free sprint to feel fast.'}]},
+        {name:'Finish', time:'2 min', items:[{d:'2 float sprints', t:'2 x 20 m', c:'90% effort, loose shoulders and relaxed hands — smooth and fast. Finish feeling quick, not tired.'}]},
       ],
-      note:'Speed coach rule: speed is quality, not volume. Time a few 10-20 m sprints if you can. If he slows down, looks heavy, or stops enjoying it, stop there.' },
+      note:'Speed coach rule: speed is quality, not volume. Time a few 15 m sprints if you can and log your best. If he slows down, looks heavy, or stops enjoying it, stop there.' },
     pm:{ title:'Handling', tag:'After school', time:'18 min',
       intro:'Hands. Both sides, every day — your edge as a 1st five.',
       blocks:[
-        {name:'Warm-up', time:'2 min', items:[{d:'Quick hands', c:'Figure-8s round the legs, ball spins.'}]},
+        {name:'Warm-up', time:'2 min', items:[{d:'Ball familiarity', t:'2 min', c:'Figure-8s around the legs, quick hand-to-hand taps, spin-and-catch. Fingers spread, get the feel of the ball.'}]},
         {name:'Passing — both hands', time:'9 min', items:[
-          {d:'Wall passing, LEFT', t:'30', c:'Ball out front, swing across, point your fingers at the target.'},
-          {d:'Wall passing, RIGHT', t:'30', c:'Fingers on the seams, not the palms.'},
-          {d:'Catch–pass on the move', t:'10 each way', c:'Run onto it, catch and pass in one motion.'}]},
-        {name:'Catching', time:'5 min', items:[{d:'High balls', t:'15', c:'Call "mine!", watch it in, catch at the top.'}]},
-        {name:'Challenge', time:'2 min', items:[{d:'10 in a row', t:'each hand', c:'10 accurate wall passes in a row off each hand.'}]},
+          {d:'Wall pass — LEFT hand lead', t:'2 x 20', c:'Stand side-on, ball in two hands out in front. Swing across your body and, on release, point your LEFT fingers at the target. Ball spins off the fingertips, never the palms.'},
+          {d:'Wall pass — RIGHT hand lead', t:'2 x 20', c:'Same shape the other way. Both hands finish pointing at the target. Reset your feet between each pass — no lazy reps.'},
+          {d:'Catch–pass on the move', t:'10 each way', c:'Jog along the wall, hands out early to give a target, catch and pass in one motion without breaking stride.'}]},
+        {name:'Catching', time:'5 min', items:[{d:'High ball takes', t:'12', c:'Call "MINE!" loud and early, watch it all the way in, catch at the highest point with fingers spread, then pull it into your chest.'}]},
+        {name:'Challenge', time:'2 min', items:[{d:'10 in a row', t:'each hand', c:'10 accurate wall passes in a row off each hand — miss the target and the count restarts. Finish on a good one.'}]},
       ]}
   },
   2:{ // Tuesday
     am:{ title:'Power Training', tag:'Morning · with Dad', time:'22 min',
       intro:'No bag needed today. Sharp power, perfect press-up shape, stop while it still looks good.',
       blocks:[
-        {name:'Warm-up', time:'4 min', items:[{d:'Move well first', c:'Jog, leg swings, lunges, squats, arm circles, 2 easy build-up runs.'}]},
+        {name:'Warm-up', time:'4 min', items:[{d:'Movement prep', t:'4 min', c:'Jog 2 min, leg swings x10 each, bodyweight squats x10, walking lunges x6 each, arm circles, 2 build-up runs.'}]},
         {name:'Power primer', time:'8 min', items:[
-          {d:'Broad jump + stick', t:'4', c:'Jump forward, land soft, freeze for 2 seconds.'},
-          {d:'Power skips', t:'2 x 15 m', c:'Push back hard and travel forward.'},
-          {d:'Squat jump + stick', t:'5', c:'Explode up, land quiet, knees tracking over toes.'}]},
-        {name:'Mike Tyson press-ups', time:'6 min', items:[
-          {d:'Technique sets', t:'3 x 4-6', c:'Feet against a wall if safe, hips back, glide forward into the press-up, elbows tucked. Normal press-ups are fine if form is better.'},
-          {d:'Quality rule', c:'No maxing out. Stop if the back sags, shoulders hurt, or the reps get ugly.'}]},
+          {d:'Broad jump + stick', t:'4', c:'Arms swing back then punch forward. Jump for distance, land soft in a quarter-squat, freeze 2 sec.'},
+          {d:'Power skip', t:'2 x 15 m', c:'Tall posture, drive the knee, push the ground back — travel forward. Land quiet on the mid-foot.'},
+          {d:'Squat jump + stick', t:'5', c:'Sink to a quarter-squat, explode straight up, land quiet with knees over toes, freeze 2 sec. Full recovery between reps — power needs freshness.'}]},
+        {name:'Press-ups', time:'6 min', items:[
+          {d:'Press-up technique sets', t:'3 x 5-8', c:'Hands under the shoulders, body dead straight (squeeze bum and tummy), lower until the chest is a fist off the floor with elbows at ~45°, then push back up strong. Knees down is fine if the back starts to sag.'},
+          {d:'Quality rule', c:'Stop the set the moment shape breaks — a sagging hip or flaring elbows means done. Perfect reps only, never a max-out.'}]},
         {name:'Core & finish', time:'4 min', items:[
-          {d:'Core', c:'30-sec plank · 20-sec side plank each side · 10 dead-bugs.'},
-          {d:'Cool down', c:'Easy walk, stretch shoulders and legs.'}]},
+          {d:'Core circuit', t:'2 rounds', c:'Front plank 30 sec (straight line, no sag) · side plank 20 sec each side · dead-bugs x10 (slow, lower back pressed flat to the floor).'},
+          {d:'Cool down', c:'Easy walk, shake the legs out, stretch chest, shoulders and quads.'}]},
       ],
       note:'This is power practice for a growing 10-year-old: supervised, low volume, perfect shape. If it stops looking sharp, call it done.'},
     pm:{ title:'Decel & Evasion', tag:'After school', time:'16 min',
       intro:'Beat a defender by slowing under control, then exploding again.',
       blocks:[
-        {name:'Warm-up', time:'2 min', items:[{d:'Ankles & feet', c:'Skips, ankle hops, quick feet.'}]},
+        {name:'Warm-up', time:'2 min', items:[{d:'Feet & ankles', t:'2 min', c:'Skips, ankle hops, fast feet on the spot, a couple of easy cuts.'}]},
         {name:'Stop before you step', time:'6 min', items:[
-          {d:'Sprint-stop marker', t:'5', c:'Sprint 5-8 m and stop right on top of the marker. Not short, not past it.'},
-          {d:'Skater jump + stick', t:'2 x 5 each', c:'Push sideways, land quiet, hold your balance.'}]},
+          {d:'Sprint-stop on the marker', t:'5', c:'Sprint 5-8 m and stop dead ON the marker — sink the hips, chest up, short choppy steps to brake. Not before it, not past it.'},
+          {d:'Skater jump + stick', t:'2 x 5 each side', c:'Push off one leg sideways, land soft on the other, and hold your balance 2 sec without the free foot touching down.'}]},
         {name:'Footwork', time:'5 min', items:[
-          {d:'3-step sidestep', t:'5 each way', c:'Sink low, plant, push away, then accelerate.'},
-          {d:'Change of pace', t:'4 runs', c:'Cruise, brake, then explode. Find the gears.'}]},
-        {name:'Game', time:'3 min', items:[{d:'Beat Dad', t:'best of 5', c:'Dad points left or right late - react, step and go.'}]},
+          {d:'3-step side-step', t:'5 each way', c:'Run in, sink low, plant hard on the OUTSIDE foot, push off it the other way, then accelerate for 3 steps. Sell it with a shoulder drop.'},
+          {d:'Gears (change of pace)', t:'4 runs', c:'Cruise at 70%, brake slightly, then explode to 100% for 5 m. A real change of speed is what beats a defender.'}]},
+        {name:'Game', time:'3 min', items:[{d:'Beat Dad', t:'best of 5', c:'Dad stands as a defender and points left or right late — read it, step off the correct foot, and burst past. Keep score.'}]},
       ]}
   },
   3:{ // Wednesday
     am:{ title:'Conditioning — Boxing Bag', tag:'Morning · with Dad', time:'22 min',
       intro:'Now the bag is set up: build the engine and quick feet. Keep moving, keep breathing.',
       blocks:[
-        {name:'Warm-up', time:'4 min', items:[{d:'Skip + shadow', c:'Skip rope 2 min, arm circles, light shadow boxing.'}]},
+        {name:'Warm-up', time:'4 min', items:[{d:'Skip + shadow', t:'4 min', c:'Skip rope 2 min (light on the balls of the feet), arm circles, then 1 min easy shadow boxing to warm the shoulders.'}]},
         {name:'Bag circuit', time:'12 min', items:[
-          {d:'6 rounds · 40 sec on / 20 off', c:'Mix straight punches, hooks, fast hands. Keep your feet moving round the bag.'},
-          {d:'It\'s for fitness, not power', c:'Breathe, stay light on your feet, work the whole round.'}]},
-        {name:'Core', time:'4 min', items:[{d:'2 rounds', c:'30-sec plank · 20-sec side plank each side · 10 dead-bugs.'}]},
-        {name:'Cool down', time:'2 min', items:[{d:'Easy skip', c:'Slow it down, get your breath back.'}]},
+          {d:'6 rounds · 40 sec on / 20 sec off', t:'6 rounds', c:'Straight punches and hooks with fast hands, but the legs never stop — bounce and circle the bag the whole round. Breathe OUT on each punch.'},
+          {d:'Fitness, not knockout', c:'Stay light and relaxed — this is the engine and quick feet, not big hits. Pace it so round 6 is as sharp as round 1.'}]},
+        {name:'Core', time:'4 min', items:[{d:'Core rounds', t:'2 rounds', c:'Plank 30 sec · side plank 20 sec each side · dead-bugs x10. Tight and controlled, no rushing.'}]},
+        {name:'Cool down', time:'2 min', items:[{d:'Easy skip + breathe', c:'Slow skipping, then a minute of slow nose-in / mouth-out breathing to bring the heart rate down.'}]},
       ]},
     pm:{ title:'Tackling — the tackle tube', tag:'After school', time:'18 min',
       intro:'The safe tackle, built up step by step on the tube.',
       blocks:[
-        {name:'Warm-up', time:'3 min', items:[{d:'Prep', c:'Jog, squats, shoulder rolls. Warm before any contact.'}]},
+        {name:'Warm-up', time:'3 min', items:[{d:'Contact prep', t:'3 min', c:'Jog, squats, shoulder rolls, a few press-ups. Body must be warm before any contact work.'}]},
         {name:'On the tube', time:'12 min', items:[
-          {d:'1. Shape (on knees)', t:'5', c:'Head up, back straight, arms ready. Just the position.'},
-          {d:'2. Walk-through', t:'5 each side', c:'Shoulder in, cheek to cheek, wrap both arms — the "ring of steel".'},
-          {d:'3. Controlled tackle', t:'5 each side', c:'Jog on, complete it, leg drive, back to your feet. Aim low, chin off chest.'},
-          {d:'4. Track & tackle', t:'5 each side', c:'Dad moves the tube — track it, then tackle. Eyes open.'}]},
-        {name:'Finish', time:'3 min', items:[{d:'Perfect reps', t:'5 each side', c:'Technique spot-on, both sides.'}]},
+          {d:'1. Shape check (on knees)', t:'5 each side', c:'On your knees at the tube: head up and to the SIDE, back straight, eyes open, arms cocked ready. Learn the safe position before any speed.'},
+          {d:'2. Walk-in tackle', t:'5 each side', c:'Walk in, shoulder into the tube, head behind it (cheek-to-cheek), and wrap BOTH arms tight — the "ring of steel". Squeeze and hold.'},
+          {d:'3. Jog-in tackle + drive', t:'5 each side', c:'Jog in, contact with the SHOULDER (never the head), keep the legs driving for 3 steps after contact, then bounce straight back to your feet.'},
+          {d:'4. Track & tackle', t:'5 each side', c:'Dad slides the tube across you — stay square, shuffle the feet to line it up, then tackle below the sternum with the chin off your chest.'}]},
+        {name:'Finish', time:'3 min', items:[{d:'5 perfect tackles', t:'5 each side', c:'Slow and spot-on both sides — head placement, wrap, leg drive, up. Finish on your best one.'}]},
       ]}
   },
   4:{ // Thursday
     am:{ title:'Agility & Power', tag:'Morning · with Dad', time:'22 min',
       intro:'Decelerate first, then react and re-accelerate.',
       blocks:[
-        {name:'Warm-up', time:'4 min', items:[{d:'Movement prep', c:'Jog, side-steps, carioca, leg swings.'}]},
+        {name:'Warm-up', time:'4 min', items:[{d:'Agility prep', t:'4 min', c:'Jog, side-steps, carioca (cross-over running) 2x each way, leg swings, quick feet.'}]},
         {name:'Closed change of direction', time:'7 min', items:[
-          {d:'Sprint-stop marker', t:'4', c:'Accelerate hard, then stop right on top of the marker under control.'},
-          {d:'5-10-5 shuttle', t:'4', c:'Brake, plant, push away. Stay low in the turns.'}]},
+          {d:'Sprint-stop-return', t:'4', c:'Sprint 8 m, stop dead under control (hips sink, short steps), then sprint back. A balanced stop with no overrun is the whole point.'},
+          {d:'5-10-5 shuttle', t:'4', c:'From the middle: 5 m right and touch the line, 10 m left and touch, 5 m back. Stay low through the turns and plant on the OUTSIDE foot.'}]},
         {name:'Reactive agility', time:'7 min', items:[
-          {d:'Mirror drill', t:'4 x 20 sec', c:'Copy Dad\'s movements - react and move.'},
-          {d:'Colour-call cut', t:'6', c:'Dad calls or points left/right late. Brake, cut, accelerate.'}]},
+          {d:'Mirror drill', t:'4 x 20 sec', c:'Face Dad a couple of metres apart — copy his movements side to side and back, staying low and light. React, do not guess.'},
+          {d:'Late side-call cut', t:'6', c:'Run toward Dad; he points or calls left/right at the last second. Brake, cut off the outside foot, accelerate away.'}]},
         {name:'Power', time:'6 min', items:[
-          {d:'Bag / med-ball throws', t:'4 × 5', c:'Chest pass, overhead throw, slam. Explode.'},
-          {d:'Step-up jumps', t:'4 × 5', c:'Onto a low step, land soft and stick it.'}]},
-        {name:'Finish', time:'2 min', items:[{d:'Reaction game', c:'Dad calls, you go. Have fun.'}]},
+          {d:'Med-ball / bag throws', t:'3 x 5', c:'Chest pass, overhead throw and slam — explode through with the whole body, not just the arms. Reset and go full effort each rep.'},
+          {d:'Step-up jump + stick', t:'3 x 4 each leg', c:'Drive up onto a low step off one leg, land soft and balanced on top, hold 2 sec. Control the landing every time.'}]},
+        {name:'Finish', time:'2 min', items:[{d:'Reaction game', c:'Dad calls "go", you sprint 10 m. A few sharp starts to finish — have fun with it.'}]},
       ],
       note:'Agility is not just quick feet. First learn to brake, then change direction, then react to Dad like a defender.' },
     pm:{ title:'Kicking & Catching', tag:'After school', time:'16 min',
       intro:'A 1st five needs a boot and a safe pair of hands.',
       blocks:[
-        {name:'Warm-up', time:'2 min', items:[{d:'Easy', c:'Light passing, loosen up.'}]},
+        {name:'Warm-up', time:'2 min', items:[{d:'Easy hands', t:'2 min', c:'Light passing back and forth, loosen the shoulders and hips.'}]},
         {name:'Kicking', time:'10 min', items:[
-          {d:'Punt, both feet', t:'8 each', c:'Drop onto the laces, strike clean. Accuracy over distance.'},
-          {d:'Grubber to a target', t:'8', c:'Ball upright, head over it, strike the top half so it rolls.'}]},
-        {name:'Catching', time:'4 min', items:[{d:'High balls', t:'15', c:'Call it, catch at the highest point.'}]},
+          {d:'Punt — technique, both feet', t:'8 each foot', c:'Hold the ball out over your kicking leg, DROP it (do not throw it) onto your laces with a pointed toe, and follow through toward the target. A clean 15 m beats a scrappy 30 m — accuracy first.'},
+          {d:'Grubber to a target', t:'8', c:'Ball held upright, head and chest over it, strike the TOP half with your laces so it rolls end-over-end along the ground to the target.'}]},
+        {name:'Catching', time:'4 min', items:[{d:'High ball takes', t:'12', c:'Call it early, get side-on, watch it into your hands at the highest point, and pull it in. Take a couple stepping forward onto the ball.'}]},
       ]}
   },
   5:{ // Friday
     am:{ title:'Engine Builder', tag:'Morning · with Dad', time:'22 min',
       intro:'The big fitness day. Keep moving — build that engine.',
       blocks:[
-        {name:'Warm-up', time:'4 min', items:[{d:'Get going', c:'Skip, jog, dynamic stretches, a couple of strides.'}]},
+        {name:'Warm-up', time:'4 min', items:[{d:'Raise the engine', t:'4 min', c:'Skip 1 min, jog, dynamic stretches (leg swings, lunges, arm circles), 2 build-up runs.'}]},
         {name:'Circuit — 3–4 rounds', time:'14 min', items:[
-          {d:'Each round, keep moving', c:'30-sec boxing bag · 10 squats · 20 m shuttle · 8 band rows · 5 broad jumps · 20-sec plank.'},
-          {d:'Rest 60 sec between rounds', c:'Then go again. Push a bit harder each round.'}]},
-        {name:'Finish', time:'2 min', items:[{d:'Well done', c:'Easy walk, big drink. That\'s the week\'s fitness done.'}]},
+          {d:'Move through the circuit', t:'3-4 rounds', c:'40-sec boxing bag · 10 squats · 20 m shuttle · 8 band rows · 5 broad jumps · 30-sec plank. Good shape on every rep — never rushed and sloppy.'},
+          {d:'Rest 60 sec between rounds', c:'A full minute to recover, then go again and match the quality. Add a 4th round only if you are still sharp.'}]},
+        {name:'Finish', time:'2 min', items:[{d:'Cool down', c:'Easy walk, big drink of water, stretch the legs. Week\'s fitness done — well done.'}]},
       ]},
     pm:{ title:'Game Skills', tag:'After school', time:'18 min',
       intro:'Put it together — skills under a bit of fatigue, like a real game.',
       blocks:[
-        {name:'Warm-up', time:'2 min', items:[{d:'Ball work', c:'Quick hands, a few passes.'}]},
+        {name:'Warm-up', time:'2 min', items:[{d:'Ball work', t:'2 min', c:'Quick hands, a few passes each way to get the eye in.'}]},
         {name:'Combine it', time:'10 min', items:[
-          {d:'Catch–run–pass', t:'8 each way', c:'Take it at pace, draw the defender (Dad), then pass or step.'},
-          {d:'Receive & decide', t:'8', c:'As 1st five: catch, then choose — run, pass, or kick.'}]},
-        {name:'Small game', time:'4 min', items:[{d:'2v1 to a target', c:'Beat Dad — pass at the right moment.'}]},
-        {name:'Finish', time:'2 min', items:[{d:'Finish on a win', c:'Your favourite skill, one good rep.'}]},
+          {d:'Catch–run–pass', t:'8 each way', c:'Take the ball at PACE, run straight to hold the defender (Dad), then pass late into the space. One smooth motion, both hands.'},
+          {d:'Receive & decide (1st five)', t:'8', c:'Dad feeds you the ball and shows a picture — space, a defender up, or a gap. You call it: run, pass, or kick. Decide early and commit.'}]},
+        {name:'Small game', time:'4 min', items:[{d:'2v1 to a target', c:'You and a runner vs Dad. Run at him to fix him, then pass at the right moment to put your runner through. Win the 2v1.'}]},
+        {name:'Finish', time:'2 min', items:[{d:'Finish on a win', c:'Your favourite skill — one perfect rep — then you are done.'}]},
       ]}
   },
   6:{ // Saturday
